@@ -34,7 +34,7 @@ app.use("/donations", donationRouter);
 const port = process.env.PORT || 4400;
 
 app.get("/", (req, res) => {
-  res.send("Server is running");
+  res.send("Server is running on port " + port);
 });
 
 app.listen(port, () => {
