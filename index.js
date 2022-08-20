@@ -3,15 +3,12 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import connectToMongo from "./db/dbconn.js"; //connect to mongoDB
 
-//import web routes
-import router from "./routes/web/Router.js";
-import resource from "./routes/web/ResourceRoute.js";
-import volunteer from "./routes/web/VolunteerRoute.js";
-
-//import mobile routes
-import userAuthRouter from "./routes/mobile/user.js";
-import resourceRouter from "./routes/mobile/resource.js";
-import donationRouter from "./routes/mobile/donations.js";
+//import routes
+import userRouter from "./routes/user.js";
+import hospitalRouter from "./routes/hospital.js";
+import donationRouter from "./routes/donations.js";
+import resourceRouter from "./routes/resource.js";
+import volunteerRouter from "./routes/volunteer.js";
 
 connectToMongo();
 
@@ -21,13 +18,9 @@ app.use(cors({ credentials: true, origin: true }));
 app.use(express.json());
 app.use(cookieParser());
 
-//web routes
-app.use(router);
-app.use(resource);
-app.use(volunteer);
-
-//mobile routes
-app.use("/user", userAuthRouter);
+app.use("/hospitals", hospitalRouter);
+app.use("/volunteers", volunteerRouter);
+app.use("/users", userRouter);
 app.use("/resources", resourceRouter);
 app.use("/donations", donationRouter);
 

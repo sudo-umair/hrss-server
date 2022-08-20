@@ -1,7 +1,11 @@
 import mongoose from "mongoose";
 
-const ResourceSchema = new mongoose.Schema({
+const resourceSchema = new mongoose.Schema({
   email: {
+    type: String,
+    required: true,
+  },
+  userType: {
     type: String,
     required: true,
   },
@@ -35,4 +39,4 @@ const ResourceSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.model("Resource", ResourceSchema);
+export default mongoose.model("resources", resourceSchema);

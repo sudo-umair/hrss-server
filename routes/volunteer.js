@@ -1,9 +1,9 @@
-import volunteerSch from "../../models/web/VolunteerSchema.js";
+import Volunteer from "../models/Volunteer.js";
 import express from "express";
 
-const volunteer = express.Router();
+const volunteerRouter = express.Router();
 
-volunteer.post("/Volunteers", async (req, res) => {
+volunteerRouter.post("/Volunteers", async (req, res) => {
   const name = req.body.name;
   const require_volunteer = req.body.require_volunteer;
   const task = req.body.task;
@@ -12,7 +12,7 @@ volunteer.post("/Volunteers", async (req, res) => {
   const skills = req.body.skills;
   const address = req.body.address;
 
-  const addvolunteer = new volunteerSch({
+  const addvolunteer = new Volunteer({
     name: name,
     require_volunteer: require_volunteer,
     task: task,
@@ -27,8 +27,8 @@ volunteer.post("/Volunteers", async (req, res) => {
   // console.log(adduser);
 });
 
-volunteer.get("/Retrieve_Volunteer", async (req, response) => {
-  const volunteer = volunteerSch.find({});
+volunteerRouter.get("/Retrieve_Volunteer", async (req, response) => {
+  const volunteer = Volunteer.find({});
   try {
     response.send(volunteer);
   } catch (error) {
@@ -45,4 +45,4 @@ volunteer.get("/Retrieve_Volunteer", async (req, response) => {
   // console.log(result);
   // })
 });
-export default volunteer;
+export default volunteerRouter;

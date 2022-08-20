@@ -1,9 +1,9 @@
 import { Router } from "express";
-import User from "../../models/mobile/User.js";
+import User from "../models/User.js";
 
-const userAuthRouter = Router();
+const userRouter = Router();
 
-userAuthRouter.post("/signup", (req, res) => {
+userRouter.post("/signup", (req, res) => {
   const { fName, lName, email, password, phone, cnic } = req.body;
   console.log(req.body);
 
@@ -31,15 +31,17 @@ userAuthRouter.post("/signup", (req, res) => {
           })
           .catch((err) => {
             res.send({ status: "500", message: "Signup Failed" });
+            console.log(err);
           });
       }
     })
     .catch((err) => {
       res.send({ status: "500", message: "Error SigningUp" });
+      console.log(err);
     });
 });
 
-userAuthRouter.post("/login", (req, res) => {
+userRouter.post("/login", (req, res) => {
   const { email, password } = req.body;
   console.log(req.body);
 
@@ -71,7 +73,7 @@ userAuthRouter.post("/login", (req, res) => {
     });
 });
 
-userAuthRouter.put("/update", (req, res) => {
+userRouter.put("/update", (req, res) => {
   const { name, email, oldPassword, password, phone } = req.body;
 
   User.findOne({ email })
@@ -108,7 +110,7 @@ userAuthRouter.put("/update", (req, res) => {
     });
 });
 
-userAuthRouter.delete("/delete", (req, res) => {
+userRouter.delete("/delete", (req, res) => {
   const { email, password } = req.body;
   console.log(req.body);
 
@@ -129,4 +131,4 @@ userAuthRouter.delete("/delete", (req, res) => {
     });
 });
 
-export default userAuthRouter;
+export default userRouter;

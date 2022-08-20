@@ -4,15 +4,15 @@
 import dotenv from "dotenv";
 dotenv.config();
 import expresss from "express";
-import user from "../../models/web/UserSchema.js";
+import Hospital from "../models/Hospital.js";
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import Authenticate from "../../middleware/Authenticate.js";
+import Authenticate from "../middleware/Authenticate.js";
 
-const router = expresss.Router();
+const hospitalRouter = expresss.Router();
 
-router.post("/Signup", async (req, res) => {
+hospitalRouter.post("/Signup", async (req, res) => {
   const name = req.body.name;
   const username = req.body.username;
   const email = req.body.email;
@@ -21,12 +21,12 @@ router.post("/Signup", async (req, res) => {
   const contact = req.body.contact;
   const address = req.body.address;
 
-  const preuser = await user.findOne(
+  const preHospital = await Hospital.findOne(
     { username: username } && { email: email }
   );
 
-  if (!preuser) {
-    const adUser = new user({
+  if (!preHospital) {
+    const addHospital = new Hospital({
       name: name,
       username: username,
       email: email,
@@ -35,18 +35,18 @@ router.post("/Signup", async (req, res) => {
       contact: contact,
       address: address,
     });
-    await adUser.save();
+    await addHospital.save();
     res.send({ Message: "Signup Successful" });
   } else {
     res.send({ Message: "Username already Exist" });
   }
 });
 
-router.post("/", async (req, res) => {
+hospitalRouter.post("/", async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
 
-  const existing_user = await user.findOne({ username: username });
+  const existing_user = await Hospital.findOne({ username: username });
 
   try {
     if (existing_user) {
@@ -79,8 +79,8 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.get("/Dashboard", Authenticate, async (req, res, next) => {
-  // router.use(cookieParser)
+hospitalRouter.get("/Dashboard", Authenticate, async (req, res, next) => {
+  // hospitalRouter.use(cookieParser)
   // Authenticate();
   try {
     console.log("hello");
@@ -90,4 +90,4 @@ router.get("/Dashboard", Authenticate, async (req, res, next) => {
   }
 });
 
-export default router;
+export default hospitalRouter;

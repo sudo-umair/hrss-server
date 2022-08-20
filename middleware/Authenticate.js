@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import user from "../models/web/UserSchema.js";
+import Hospital from "../models/Hospital.js";
 
 async function Authenticate(req, res, next) {
   try {
@@ -13,21 +13,21 @@ async function Authenticate(req, res, next) {
     console.log("hello auth");
     const verifyToken = jwt.verify(token, `${process.env.SECRET_TOKEN}`);
     console.log("AUthenticate", verifyToken);
-    const rootuser = await user.findOne({
+    const rootHospital = await Hospital.findOne({
       _id: verifyToken._id,
       "tokens.token": token,
     });
-    console.log("rootuser", rootuser);
+    console.log("roothospital", rootHospital);
 
-    if (rootuser) {
+    if (rootHospital) {
       // console.log('hello from auth')
-      // // console.log(rootuser)
+      // // console.log(roothospital)
       // req.token = token;
-      // req.rootuser= rootuser;
-      // req.userId = rootuser._id;
-      res.send(rootuser);
+      // req.roothospital= roothospital;
+      // req.hospitalId = roothospital._id;
+      res.send(rootHospital);
     } else {
-      res.send("User Not Found");
+      res.send("hospital Not Found");
     }
     next();
   } catch (error) {

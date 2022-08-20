@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const DonationSchema = new mongoose.Schema({
+const donationSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -22,4 +22,4 @@ const DonationSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.model("Donation", DonationSchema);
+export default mongoose.model("donations", donationSchema);

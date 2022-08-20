@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 
-const UserSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -32,17 +32,17 @@ const UserSchema = new mongoose.Schema({
   },
 });
 
-UserSchema.pre("save", async function (next) {
+userSchema.pre("save", async function (next) {
   const user = this;
   const hashedPassword = await bcrypt.hash(user.password, 10);
   user.password = hashedPassword;
   next();
 });
 
-UserSchema.methods.isValidPassword = async function (password) {
+userSchema.methods.isValidPassword = async function (password) {
   const user = this;
   const compare = await bcrypt.compare(password, user.password);
   return compare;
 };
 
-export default mongoose.model("User", UserSchema);
+export default mongoose.model("users", userSchema);

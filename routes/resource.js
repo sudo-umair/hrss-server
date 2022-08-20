@@ -1,14 +1,16 @@
 import { Router } from "express";
-import Resource from "../../models/mobile/Resource.js";
+import Resource from "../models/Resource.js";
 
 const resourceRouter = Router();
 
 resourceRouter.post("/postRequest", (req, res) => {
-  const { email, resource, quantity, duration, phone, address } = req.body;
+  const { email, userType, resource, quantity, duration, phone, address } =
+    req.body;
   console.log(req.body);
 
   const newResource = new Resource({
     email,
+    userType,
     resource,
     quantity,
     duration,
@@ -41,6 +43,17 @@ resourceRouter.get("/fetchRequests", (req, res) => {
     .catch((err) => {
       res.send({ status: "500", message: "Error Fetching Requests" });
     });
+});
+
+resourceRouter.get("/home", async (req, response) => {
+  resourceSch.find({}, (err, result) => {
+    if (err)
+      // res.send(err);
+      console.log("fail");
+    // console.log("hello")
+    else response.send(result);
+    // console.log(result);
+  });
 });
 
 export default resourceRouter;
