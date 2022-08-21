@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -23,10 +23,6 @@ const userSchema = new mongoose.Schema({
     required: true,
   },
   createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-  updatedAt: {
     type: Date,
     default: Date.now,
   },

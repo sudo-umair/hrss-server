@@ -1,7 +1,8 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import connectToMongo from "./db/dbconn.js"; //connect to mongoDB
+//connect to mongoDB
+import connectToMongo from "./db/dbconn.js";
 
 //import routes
 import userRouter from "./routes/user.js";
