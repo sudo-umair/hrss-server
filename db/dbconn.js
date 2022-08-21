@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 // const MONGO_URI = "mongodb://localhost:27017/hrss";
 
 const MONGO_URI =
-  "mongodb+srv://talhamalik:talha1234@fyp.9rvjl.mongodb.net/HRSS?retryWrites=true&w=majority";
+  "mongodb+srv://talha:talha1234@hrss.u1ubyta.mongodb.net/?retryWrites=true&w=majority";
 
 const connectToMongo = () => {
   try {

@@ -41,7 +41,7 @@ userRouter.post("/signup", (req, res) => {
     });
 });
 
-userRouter.post("/login", (req, res) => {
+userRouter.post("/signin", (req, res) => {
   const { email, password } = req.body;
   console.log(req.body);
 
