@@ -75,9 +75,7 @@ userRouter.post("/signin", (req, res) => {
 
 userRouter.put("/update", (req, res) => {
   const { name, email, oldPassword, password, phone } = req.body;
-
   User.findOne({ email })
-
     .then((user) => {
       if (!user) {
         res.send({ status: "400", message: "Account Does Not Exist" });

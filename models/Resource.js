@@ -8,8 +8,9 @@ const resourceSchema = new mongoose.Schema({
   userType: {
     type: String,
     required: true,
+    default: "user",
   },
-  resource: {
+  resourceName: {
     type: String,
     required: true,
   },
@@ -28,6 +29,18 @@ const resourceSchema = new mongoose.Schema({
   address: {
     type: String,
     required: true,
+  },
+  notes: {
+    type: String,
+    default: "No Additional Notes Provided",
+  },
+  requestStatus: {
+    type: String,
+    default: "Pending",
+  },
+  requestApprovedBy: {
+    type: String,
+    default: "Pending",
   },
   createdAt: {
     type: Date,

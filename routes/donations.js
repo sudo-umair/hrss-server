@@ -3,21 +3,23 @@ import Donation from "../models/Donation.js";
 
 const donationRouter = Router();
 
-donationRouter.get("/getDonationsList", (req, res) => {
-  Donation.find({}, (err, donations) => {
-    if (err) {
+donationRouter.get("/fetchDonations", (req, res) => {
+  Donation.find({})
+    .then((result) => {
+      res.send({
+        status: "200",
+        message: "Donations Fetched Successfully",
+        data: result,
+      });
+    })
+    .catch((err) => {
+      console.log("Error in fetchDonations", err);
       res.send({
         status: "500",
-        message: "Error Fetching Donations",
-        error: err,
+        message: "Fetching Donations Failed",
+        data: err,
       });
-    }
-    res.send({
-      status: "200",
-      message: "Data fetched successfully",
-      results: donations,
     });
-  });
 });
 
 export default donationRouter;
