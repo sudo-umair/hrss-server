@@ -12,7 +12,7 @@ const connectToMongo = () => {
     });
     console.log("MongoDB connected");
   } catch (err) {
-    console.log(err);
+    console.log("Error in dbConn", err);
   }
 };
 
