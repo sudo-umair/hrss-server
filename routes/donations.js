@@ -9,7 +9,7 @@ donationRouter.get("/fetchDonations", (req, res) => {
       res.send({
         status: "200",
         message: "Donations Fetched Successfully",
-        data: result,
+        results: result,
       });
     })
     .catch((err) => {

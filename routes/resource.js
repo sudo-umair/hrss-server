@@ -5,9 +5,10 @@ const resourceRouter = Router();
 
 resourceRouter.post("/postRequest", (req, res) => {
   const {
+    name,
     email,
     userType,
-    resource,
+    resourceName,
     quantity,
     duration,
     phone,
@@ -17,9 +18,10 @@ resourceRouter.post("/postRequest", (req, res) => {
   console.log(req.body);
 
   const newResource = new Resource({
+    name,
     email,
     userType,
-    resource,
+    resourceName,
     quantity,
     duration,
     phone,
@@ -53,7 +55,7 @@ resourceRouter.get("/fetchRequests", (req, res) => {
         res.send({
           status: "200",
           message: "Requests Fetched Successfully",
-          data: result,
+          results: result,
         });
       })
       .catch((err) => {
@@ -93,8 +95,9 @@ resourceRouter.get("/fetchRequests", (req, res) => {
     });
 });
 
-resourceRouter.get("/totalNumberOfRequsts", (req, res) => {
-  Resource.find({})
+resourceRouter.get("/totalNumberOfRequests", (req, res) => {
+  const { email } = req.body;
+  Resource.find({ email })
     .then((resources) => {
       res.send({
         status: "200",
@@ -121,28 +124,28 @@ resourceRouter.get("/fetchRequestsByEmail", (req, res) => {
     .catch((err) => {
       res.send({ status: "500", message: "Error Fetching Requests" });
     });
-}),
-  resourceRouter.put("/updateRequest", (req, res) => {
-    const { id, requestStatus, requestApprovedBy } = req.body;
-    Resource.findByIdAndUpdate(id, {
-      requestStatus,
-      requestApprovedBy,
-    })
-      .then((result) => {
-        res.send({
-          status: "200",
-          message: "Request Updated Successfully",
-          data: result,
-        });
-      })
-      .catch((err) => {
-        res.send({
-          status: "500",
-          message: "Request Update Failed",
-          error: err,
-        });
+});
+
+resourceRouter.put("/updateRequest", (req, res) => {
+  const { id, requestStatus, requestApprovedBy } = req.body;
+  Resource.findByIdAndUpdate(id, {
+    requestStatus,
+    requestApprovedBy,
+  })
+    .then((result) => {
+      res.send({
+        status: "200",
+        message: "Request Updated Successfully",
       });
-  });
+    })
+    .catch((err) => {
+      res.send({
+        status: "500",
+        message: "Request Update Failed",
+        error: err,
+      });
+    });
+});
 
 resourceRouter.get("/home", async (req, response) => {
   resourceSch.find({}, (err, result) => {
