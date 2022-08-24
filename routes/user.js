@@ -85,6 +85,7 @@ userRouter.put("/update", (req, res) => {
             user.name = name;
             user.password = password;
             user.phone = phone;
+            user.updatedAt = Date.now();
             user
               .save()
               .then((user) => {
