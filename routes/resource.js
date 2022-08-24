@@ -46,12 +46,15 @@ resourceRouter.post("/postRequest", (req, res) => {
     });
 });
 
-resourceRouter.get("/fetchRequests", (req, res) => {
+resourceRouter.post("/fetchRequests", (req, res) => {
   const { userType } = req.body;
-
   if (userType === "user") {
-    Resource.find({ userType: "user" })
+    // fetch requests where userType is user and email not equal to email and status is pending
+    Resource.find({
+      userType: "user",
+    })
       .then((result) => {
+        // console.log(result);
         res.send({
           status: "200",
           message: "Requests Fetched Successfully",
@@ -82,21 +85,11 @@ resourceRouter.get("/fetchRequests", (req, res) => {
         });
       });
   }
-  Resource.find()
-    .then((resources) => {
-      res.send({
-        status: "200",
-        message: "Requests Fetched Successfully",
-        data: resources,
-      });
-    })
-    .catch((err) => {
-      res.send({ status: "500", message: "Error Fetching Requests" });
-    });
 });
 
-resourceRouter.get("/totalNumberOfRequests", (req, res) => {
+resourceRouter.post("/totalNumberOfRequests", (req, res) => {
   const { email } = req.body;
+
   Resource.find({ email })
     .then((resources) => {
       res.send({
@@ -127,10 +120,12 @@ resourceRouter.get("/fetchRequestsByEmail", (req, res) => {
 });
 
 resourceRouter.put("/updateRequest", (req, res) => {
-  const { id, requestStatus, requestApprovedBy } = req.body;
+  const { id, requestStatus, requestApprovedByName, requestApprovedByPhone } =
+    req.body;
   Resource.findByIdAndUpdate(id, {
     requestStatus,
-    requestApprovedBy,
+    requestApprovedByName,
+    requestApprovedByPhone,
   })
     .then((result) => {
       res.send({

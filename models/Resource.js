@@ -9,6 +9,14 @@ const resourceSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  phone: {
+    type: String,
+    required: true,
+  },
+  address: {
+    type: String,
+    required: true,
+  },
   userType: {
     type: String,
     required: true,
@@ -26,14 +34,6 @@ const resourceSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  phone: {
-    type: String,
-    required: true,
-  },
-  address: {
-    type: String,
-    required: true,
-  },
   notes: {
     type: String,
     default: "No Additional Notes Provided",
@@ -42,7 +42,15 @@ const resourceSchema = new mongoose.Schema({
     type: String,
     default: "Pending",
   },
-  requestApprovedBy: {
+  requestApprovedByName: {
+    type: String,
+    default: "Pending",
+  },
+  requestApprovedByPhone: {
+    type: String,
+    default: "Pending",
+  },
+  requestApprovedByEmail: {
     type: String,
     default: "Pending",
   },
