@@ -103,29 +103,19 @@ resourceRouter.post("/totalNumberOfRequests", (req, res) => {
     });
 });
 
-resourceRouter.get("/fetchRequestsByEmail", (req, res) => {
-  const { email } = req.body;
-
-  Resource.find({ email })
-    .then((resources) => {
-      res.send({
-        status: "200",
-        message: "Requests Fetched Successfully",
-        data: resources,
-      });
-    })
-    .catch((err) => {
-      res.send({ status: "500", message: "Error Fetching Requests" });
-    });
-});
-
 resourceRouter.put("/updateRequest", (req, res) => {
-  const { id, requestStatus, requestApprovedByName, requestApprovedByPhone } =
-    req.body;
+  const {
+    id,
+    requestStatus,
+    requestApprovedByName,
+    requestApprovedByEmail,
+    requestApprovedByPhone,
+  } = req.body;
   Resource.findByIdAndUpdate(id, {
     requestStatus,
     requestApprovedByName,
     requestApprovedByPhone,
+    requestApprovedByEmail,
   })
     .then((result) => {
       res.send({
