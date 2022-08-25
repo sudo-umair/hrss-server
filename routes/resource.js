@@ -111,17 +111,36 @@ resourceRouter.put("/updateRequest", (req, res) => {
     requestApprovedByEmail,
     requestApprovedByPhone,
   } = req.body;
-  Resource.findByIdAndUpdate(id, {
-    requestStatus,
-    requestApprovedByName,
-    requestApprovedByPhone,
-    requestApprovedByEmail,
-  })
-    .then((result) => {
-      res.send({
-        status: "200",
-        message: "Request Updated Successfully",
-      });
+
+  Resource.findById(id)
+    .then((resource) => {
+      if (resource.requestStatus !== "Pending") {
+        const { requestApprovedByName } = resource;
+        res.send({
+          status: "500",
+          message: "Request Already Approved By " + requestApprovedByName,
+        });
+      } else {
+        Resource.findByIdAndUpdate(id, {
+          requestStatus,
+          requestApprovedByName,
+          requestApprovedByPhone,
+          requestApprovedByEmail,
+        })
+          .then((result) => {
+            res.send({
+              status: "200",
+              message: "Request Updated Successfully",
+            });
+          })
+          .catch((err) => {
+            res.send({
+              status: "500",
+              message: "Request Update Failed",
+              error: err,
+            });
+          });
+      }
     })
     .catch((err) => {
       res.send({
