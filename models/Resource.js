@@ -1,56 +1,56 @@
 import mongoose from "mongoose";
 
 const resourceSchema = new mongoose.Schema({
-  name: {
+  resourceName: {
     type: String,
     required: true,
   },
-  email: {
+  resourceQuantity: {
     type: String,
     required: true,
   },
-  phone: {
+  resourceDuration: {
     type: String,
     required: true,
   },
-  address: {
+  resourceNotes: {
     type: String,
-    required: true,
+    default: "No Additional Notes Provided",
   },
   userType: {
     type: String,
     required: true,
     default: "user",
   },
-  resourceName: {
-    type: String,
-    required: true,
-  },
-  quantity: {
-    type: String,
-    required: true,
-  },
-  duration: {
-    type: String,
-    required: true,
-  },
-  notes: {
-    type: String,
-    default: "No Additional Notes Provided",
-  },
   requestStatus: {
     type: String,
     default: "Pending",
   },
-  requestApprovedByName: {
+  requestedByName: {
+    type: String,
+    required: true,
+  },
+  requestedByEmail: {
+    type: String,
+    required: true,
+  },
+  requestedByPhone: {
+    type: String,
+    required: true,
+  },
+  requestedByAddress: {
+    type: String,
+    required: true,
+  },
+  approvedByName: {
     type: String,
     default: "Pending",
   },
-  requestApprovedByPhone: {
+  approvedByPhone: {
     type: String,
     default: "Pending",
   },
-  requestApprovedByEmail: {
+  approvedByEmail: {
     type: String,
     default: "Pending",
   },

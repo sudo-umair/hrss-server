@@ -5,28 +5,28 @@ const resourceRouter = Router();
 
 resourceRouter.post("/postRequest", (req, res) => {
   const {
-    name,
-    email,
     userType,
     resourceName,
-    quantity,
-    duration,
-    phone,
-    address,
-    notes,
+    resourceQuantity,
+    resourceDuration,
+    requestedByName,
+    requestedByEmail,
+    requestedByPhone,
+    requestedByAddress,
+    resourceNotes,
   } = req.body;
   console.log(req.body);
 
   const newResource = new Resource({
-    name,
-    email,
     userType,
     resourceName,
-    quantity,
-    duration,
-    phone,
-    address,
-    notes,
+    resourceQuantity,
+    resourceDuration,
+    resourceNotes,
+    requestedByName,
+    requestedByEmail,
+    requestedByPhone,
+    requestedByAddress,
   });
 
   newResource
@@ -38,6 +38,7 @@ resourceRouter.post("/postRequest", (req, res) => {
       });
     })
     .catch((err) => {
+      console.log(err);
       res.send({
         status: "500",
         message: "Request Failed",
@@ -90,7 +91,7 @@ resourceRouter.post("/fetchRequests", (req, res) => {
 resourceRouter.post("/totalNumberOfRequests", (req, res) => {
   const { email } = req.body;
 
-  Resource.find({ email })
+  Resource.find({ requestedByEmail: email })
     .then((resources) => {
       res.send({
         status: "200",
@@ -107,25 +108,25 @@ resourceRouter.put("/updateRequest", (req, res) => {
   const {
     id,
     requestStatus,
-    requestApprovedByName,
-    requestApprovedByEmail,
-    requestApprovedByPhone,
+    approvedByName,
+    approvedByEmail,
+    approvedByPhone,
   } = req.body;
 
   Resource.findById(id)
     .then((resource) => {
       if (resource.requestStatus !== "Pending") {
-        const { requestApprovedByName } = resource;
+        const { approvedByName } = resource;
         res.send({
           status: "500",
-          message: "Request Already Approved By " + requestApprovedByName,
+          message: "Request Already Approved By " + approvedByName,
         });
       } else {
         Resource.findByIdAndUpdate(id, {
           requestStatus,
-          requestApprovedByName,
-          requestApprovedByPhone,
-          requestApprovedByEmail,
+          approvedByName,
+          approvedByPhone,
+          approvedByEmail,
         })
           .then((result) => {
             res.send({
