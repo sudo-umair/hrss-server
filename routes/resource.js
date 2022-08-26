@@ -1,7 +1,37 @@
 import { Router } from "express";
 import Resource from "../models/Resource.js";
+import axios from "axios";
 
 const resourceRouter = Router();
+
+const appId = 3686;
+const appToken = "bSmfQdmZN8TAxKjrJdk7Px";
+const baseUrl = "https://app.nativenotify.com/api/indie/notification";
+
+const sendNotificationToRequester = async (
+  requesterEmail,
+  approverName,
+  resourceName
+) => {
+  try {
+    axios
+      .post(baseUrl, {
+        subID: requesterEmail,
+        appId: appId,
+        appToken: appToken,
+        title: "Request Approved",
+        message: `Your request for ${resourceName} has been approved by ${approverName}`,
+      })
+      .then((response) => {
+        // console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 resourceRouter.post("/postRequest", (req, res) => {
   const {
@@ -15,7 +45,6 @@ resourceRouter.post("/postRequest", (req, res) => {
     requestedByAddress,
     resourceNotes,
   } = req.body;
-  console.log(req.body);
 
   const newResource = new Resource({
     userType,
@@ -55,7 +84,6 @@ resourceRouter.post("/fetchRequests", (req, res) => {
       userType: "user",
     })
       .then((result) => {
-        // console.log(result);
         res.send({
           status: "200",
           message: "Requests Fetched Successfully",
@@ -129,6 +157,12 @@ resourceRouter.put("/updateRequest", (req, res) => {
           approvedByEmail,
         })
           .then((result) => {
+            const { resourceName, requestedByEmail } = result;
+            sendNotificationToRequester(
+              requestedByEmail,
+              approvedByName,
+              resourceName
+            );
             res.send({
               status: "200",
               message: "Request Updated Successfully",
