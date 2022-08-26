@@ -21,6 +21,7 @@ const sendNotificationToRequester = async (
         appToken: appToken,
         title: "Request Approved",
         message: `Your request for ${resourceName} has been approved by ${approverName}`,
+        pushData: '{ "screenName": "Resources" }',
       })
       .then((response) => {
         // console.log(response);
