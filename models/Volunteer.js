@@ -1,37 +1,54 @@
 import mongoose from "mongoose";
 
 const volunteerSchema = new mongoose.Schema({
-    name:{
+  hospitalName: {
+    type: String,
+    required: true,
+  },
+  hospitalLocation: {
+    type: String,
+    required: true,
+  },
+  volunteersRequired: {
+    type: String,
+    required: true,
+  },
+  volunteerTasks: {
+    type: String,
+    required: true,
+  },
+  timeDuration: {
+    type: String,
+    required: true,
+  },
+  volunteersSkills: {
+    type: String,
+    required: true,
+  },
+  applicants: [
+    {
+      name: {
         type: String,
-        required: true
+        required: true,
+      },
+      email: {
+        type: String,
+        required: true,
+      },
+      phone: {
+        type: String,
+        required: true,
+      },
+      cnic: {
+        type: String,
+        required: true,
+      },
     },
-    require_volunteer:{
-        type: String,
-        required: true
-    },
-    task:{
-        type: String,
-        required: true
-    },
-    availability:{
-        type: String,
-        required: true
-    },
-    duration:{
-        type: String,
-        required: true
-    },
-    skills:{
-        type: String,
-        required: true
-    },
-    address:{
-        type: String,
-        required: true
-    }
-})
+  ],
+  additionalNotes: {
+    type: String,
+    required: true,
+  },
+});
 
-const volunteerSch = new mongoose.model("volunteers", volunteerSchema);
-
-
-export default volunteerSch;
+export default mongoose.model("volunteers", volunteerSchema);

@@ -158,12 +158,14 @@ resourceRouter.put("/updateRequest", (req, res) => {
           approvedByEmail,
         })
           .then((result) => {
-            const { resourceName, requestedByEmail } = result;
-            sendNotificationToRequester(
-              requestedByEmail,
-              approvedByName,
-              resourceName
-            );
+            const { resourceName, requestedByEmail, userType } = result;
+            if (userType === "user") {
+              sendNotificationToRequester(
+                requestedByEmail,
+                approvedByName,
+                resourceName
+              );
+            }
             res.send({
               status: "200",
               message: "Request Updated Successfully",
