@@ -1,7 +1,7 @@
 import { Router } from "express";
 import Resource from "../models/Resource.js";
 import axios from "axios";
-import { baseUrl, appId, appToken } from "../constants.js";
+import { baseUrlIndie, appId, appToken } from "../constants.js";
 
 const resourceRouter = Router();
 
@@ -12,7 +12,7 @@ const sendNotificationToRequester = async (
 ) => {
   try {
     axios
-      .post(baseUrl, {
+      .post(baseUrlIndie, {
         subID: requesterEmail,
         appId: appId,
         appToken: appToken,
