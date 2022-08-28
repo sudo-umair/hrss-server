@@ -1,14 +1,32 @@
 import mongoose from "mongoose";
 
-const volunteerSchema = new mongoose.Schema({
-  hospitalName: {
+const applicantSchema = new mongoose.Schema({
+  applicantName: {
     type: String,
     required: true,
   },
-  hospitalLocation: {
+  applicantEmail: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  applicantPhone: {
     type: String,
     required: true,
   },
+  applicantCnic: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  applicantRequestStatus: {
+    default: "Applied",
+    type: String,
+    required: true,
+  },
+});
+
+const VolunteerRequestScheama = new mongoose.Schema({
   volunteersRequired: {
     type: String,
     required: true,
@@ -17,38 +35,40 @@ const volunteerSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  timeDuration: {
-    type: String,
-    required: true,
-  },
   volunteersSkills: {
     type: String,
     required: true,
   },
-  applicants: [
-    {
-      name: {
-        type: String,
-        required: true,
-      },
-      email: {
-        type: String,
-        required: true,
-      },
-      phone: {
-        type: String,
-        required: true,
-      },
-      cnic: {
-        type: String,
-        required: true,
-      },
-    },
-  ],
+  timeDuration: {
+    type: String,
+    required: true,
+  },
   additionalNotes: {
     type: String,
     required: true,
   },
+  applicants: [applicantSchema],
+});
+
+const volunteerSchema = new mongoose.Schema({
+  hospitalName: {
+    type: String,
+    required: true,
+  },
+  hospitalEmail: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  hospitalPhone: {
+    type: String,
+    required: true,
+  },
+  hospitalLocation: {
+    type: String,
+    required: true,
+  },
+  volunteerRequests: [VolunteerRequestScheama],
 });
 
 export default mongoose.model("volunteers", volunteerSchema);
