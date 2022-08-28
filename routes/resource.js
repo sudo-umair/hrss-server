@@ -1,12 +1,9 @@
 import { Router } from "express";
 import Resource from "../models/Resource.js";
 import axios from "axios";
+import { baseUrl, appId, appToken } from "../constants.js";
 
 const resourceRouter = Router();
-
-const appId = 3686;
-const appToken = "bSmfQdmZN8TAxKjrJdk7Px";
-const baseUrl = "https://app.nativenotify.com/api/indie/notification";
 
 const sendNotificationToRequester = async (
   requesterEmail,
@@ -24,7 +21,7 @@ const sendNotificationToRequester = async (
         pushData: '{ "screenName": "Resources" }',
       })
       .then((response) => {
-        // console.log(response);
+        console.log(response);
       })
       .catch((error) => {
         console.log(error);
