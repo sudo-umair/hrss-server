@@ -2,34 +2,9 @@ import { Router } from "express";
 import Resource from "../models/Resource.js";
 import axios from "axios";
 import { baseUrlIndie, appId, appToken } from "../constants.js";
+import { sendNotificationToUser } from "./appNotifications.js";
 
 const resourceRouter = Router();
-
-const sendNotificationToRequester = async (
-  requesterEmail,
-  approverName,
-  resourceName
-) => {
-  try {
-    axios
-      .post(baseUrlIndie, {
-        subID: requesterEmail,
-        appId: appId,
-        appToken: appToken,
-        title: "Request Approved",
-        message: `Your request for ${resourceName} has been approved by ${approverName}`,
-        pushData: '{ "screenName": "Resources" }',
-      })
-      .then((response) => {
-        console.log(response);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  } catch (error) {
-    console.log(error);
-  }
-};
 
 resourceRouter.post("/postRequest", (req, res) => {
   const {
@@ -157,10 +132,11 @@ resourceRouter.put("/updateRequest", (req, res) => {
           .then((result) => {
             const { resourceName, requestedByEmail, userType } = result;
             if (userType === "user") {
-              sendNotificationToRequester(
+              sendNotificationToUser(
                 requestedByEmail,
-                approvedByName,
-                resourceName
+                "Request Approved",
+                `Your request for ${resourceName} has been approved by ${approvedByName}`,
+                ""
               );
             }
             res.send({
