@@ -8,7 +8,6 @@ const applicantSchema = new mongoose.Schema({
   applicantEmail: {
     type: String,
     required: true,
-    unique: true,
   },
   applicantPhone: {
     type: String,
@@ -17,7 +16,6 @@ const applicantSchema = new mongoose.Schema({
   applicantCnic: {
     type: String,
     required: true,
-    unique: true,
   },
   applicantRequestStatus: {
     default: "Applied",
@@ -27,6 +25,10 @@ const applicantSchema = new mongoose.Schema({
 });
 
 const VolunteerRequestScheama = new mongoose.Schema({
+  volunteerRequestTitle: {
+    type: String,
+    required: true,
+  },
   volunteersRequired: {
     type: String,
     required: true,
