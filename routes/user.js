@@ -73,7 +73,7 @@ userRouter.post("/signin", (req, res) => {
     });
 });
 
-userRouter.put("/update", (req, res) => {
+userRouter.put("/updateAccount", (req, res) => {
   const { name, email, oldPassword, password, phone } = req.body;
   User.findOne({ email })
     .then((user) => {
@@ -109,20 +109,33 @@ userRouter.put("/update", (req, res) => {
     });
 });
 
-userRouter.delete("/delete", (req, res) => {
+userRouter.post("/deleteAccount", (req, res) => {
   const { email, password } = req.body;
   console.log(req.body);
 
-  User.findOneAndDelete({ email })
+  User.findOne({ email })
     .then((user) => {
       if (!user) {
         res.send({ status: "400", message: "Account Does Not Exist" });
       } else {
-        if (user.password === password) {
-          res.send({ status: "200", message: "Delete Successful" });
-        } else {
-          res.send({ status: "400", message: "Invalid Password" });
-        }
+        user.isValidPassword(password).then((isMatch) => {
+          if (isMatch) {
+            user
+              .remove()
+              .then((user) => {
+                res.send({
+                  status: "200",
+                  message: "Delete Successful",
+                  user: user,
+                });
+              })
+              .catch((err) => {
+                res.send({ status: "500", message: "Error Deleting" });
+              });
+          } else {
+            res.send({ status: "400", message: "Invalid Password" });
+          }
+        });
       }
     })
     .catch((err) => {
