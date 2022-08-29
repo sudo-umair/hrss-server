@@ -151,31 +151,10 @@ volunteerRouter.post("/deleteVolunteerRequest", async (req, res) => {
   }
 });
 
-// volunteerRouter.post("/fetchOneVolunteerRequest", async (req, res) => {
-//   try {
-//     const { hospitalEmail, volunteerRequestId } = req.body;
-//     const hospital = await Volunteer.findOne({
-//       hospitalEmail,
-//     });
-//     const volunteerRequest = hospital.volunteerRequests.find(
-//       (request) => request._id == volunteerRequestId
-//     );
-//     res.send({
-//       status: "200",
-//       message: "Volunteer Request Fetched Successfully",
-//       results: volunteerRequest,
-//     });
-
-//     console.log(volunteerRequest);
-//   } catch (err) {
-//     res.send({ status: "500", message: "Error Fetching Volunteer Request" });
-//   }
-// });
-
 //app
-volunteerRouter.post("/fetchAllHospitalsRegistered", async (req, res) => {
+volunteerRouter.get("/fetchAllRequests", async (req, res) => {
   try {
-    const hospitalsRegistered = await Volunteer.find();
+    const hospitalsRegistered = await Volunteer.find({});
     res.send({
       status: "200",
       message: "Volunteer Requests Fetched Successfully",
