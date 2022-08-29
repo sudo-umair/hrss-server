@@ -2,8 +2,6 @@ import { appId, appToken, baseUrl } from "../constants.js";
 import axios from "axios";
 import { Router } from "express";
 
-import { appId, appToken, baseUrl } from "../constants.js";
-
 export const sendNotificationToUser = async (
   userId,
   title,
