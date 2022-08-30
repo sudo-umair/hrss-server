@@ -3,69 +3,32 @@ import express from "express";
 
 const volunteerRouter = express.Router();
 
-volunteerRouter.post("/registerHospital", async (req, res) => {
-  try {
-    const { hospitalName, hospitalEmail, hospitalPhone, hospitalLocation } =
-      req.body;
-
-    const existingHospital = await Volunteer.findOne({
-      hospitalEmail,
-    });
-    if (existingHospital) {
-      res.send({
-        status: "500",
-        message: "Hospital Already Exists",
-      });
-    } else {
-      const addHospital = new Volunteer({
-        hospitalName,
-        hospitalEmail,
-        hospitalPhone,
-        hospitalLocation,
-      });
-      await addHospital.save();
-      res.send({
-        status: "200",
-
-        message: "Hospital Added Successfully",
-      });
-    }
-  } catch (err) {
-    console.log(err);
-    res.send({
-      status: "500",
-      message: "Error Adding Hospital",
-    });
-  }
-});
-
 volunteerRouter.post("/createVolunteerRequest", async (req, res) => {
   try {
     const {
+      hospitalName,
       hospitalEmail,
+      hospitalPhone,
+      hospitalLocation,
       volunteerRequestTitle,
+      volunteerRequestDescription,
       volunteersRequired,
-      volunteerTasks,
-      volunteersSkills,
       timeDuration,
-      additionalNotes,
     } = req.body;
 
-    const addVolunteerRequest = await Volunteer.findOne({
+    const volunteer = new Volunteer({
+      hospitalName,
       hospitalEmail,
-    });
-
-    console.log(addVolunteerRequest);
-    addVolunteerRequest.volunteerRequests.push({
+      hospitalPhone,
+      hospitalLocation,
       volunteerRequestTitle,
+      volunteerRequestDescription,
       volunteersRequired,
-      volunteerTasks,
-      volunteersSkills,
       timeDuration,
-      additionalNotes,
     });
 
-    await addVolunteerRequest.save();
+    await volunteer.save();
+
     res.send({ status: "200", message: "Volunteer Request Added" });
   } catch (err) {
     console.log(err);
@@ -78,13 +41,13 @@ volunteerRouter.post(
   async (req, res) => {
     try {
       const { hospitalEmail } = req.body;
-      const volunteerRequests = await Volunteer.findOne({
+      const volunteerRequests = await Volunteer.find({
         hospitalEmail,
       });
       res.send({
         status: "200",
         message: "Volunteer Requests Fetched Successfully",
-        results: volunteerRequests.volunteerRequests,
+        results: volunteerRequests,
       });
     } catch (err) {
       res.send({ status: "500", message: "Error Fetching Volunteer Requests" });
@@ -92,59 +55,48 @@ volunteerRouter.post(
   }
 );
 
-volunteerRouter.post("/updateVolunteerRequest", async (req, res) => {
+volunteerRouter.put("/updateVolunteerRequest", async (req, res) => {
   try {
     const {
+      hospitalName,
       hospitalEmail,
-      volunteerRequestId,
+      hospitalPhone,
+      hospitalLocation,
       volunteerRequestTitle,
+      volunteerRequestDescription,
       volunteersRequired,
-      volunteerTasks,
-      volunteersSkills,
       timeDuration,
-      additionalNotes,
     } = req.body;
 
-    const updateVolunteerRequest = await Volunteer.findOne({
-      hospitalEmail,
-    });
-
-    const volunteerRequest = updateVolunteerRequest.volunteerRequests.find(
-      (volunteerRequest) => volunteerRequest._id == volunteerRequestId
+    const volunteer = await Volunteer.findOneAndUpdate(
+      {
+        hospitalEmail,
+      },
+      {
+        hospitalName,
+        hospitalEmail,
+        hospitalPhone,
+        hospitalLocation,
+        volunteerRequestTitle,
+        volunteerRequestDescription,
+        volunteersRequired,
+        timeDuration,
+      }
     );
-    volunteerRequest.volunteerRequestTitle = volunteerRequestTitle;
-    volunteerRequest.volunteerTasks = volunteerTasks;
-    volunteerRequest.volunteersRequired = volunteersRequired;
-    volunteerRequest.volunteersSkills = volunteersSkills;
-    volunteerRequest.timeDuration = timeDuration;
-    volunteerRequest.additionalNotes = additionalNotes;
-    await updateVolunteerRequest.save();
-
-    res.send({
-      status: "200",
-      message: "Volunteer Request Updated Successfully",
-    });
+    res.send({ status: "200", message: "Volunteer Request Updated" });
   } catch (err) {
     console.log(err);
     res.send({ status: "500", message: "Error Updating Volunteer Request" });
   }
 });
 
-volunteerRouter.post("/deleteVolunteerRequest", async (req, res) => {
+volunteerRouter.delete("/deleteVolunteerRequest", async (req, res) => {
   try {
-    const { hospitalEmail, volunteerRequestId } = req.body;
-    const deleteVolunteerRequest = await Volunteer.findOne({
-      hospitalEmail,
+    const { volunteerRequestId } = req.body;
+    await Volunteer.findByIdAndDelete({
+      _id: volunteerRequestId,
     });
-    const volunteerRequest = deleteVolunteerRequest.volunteerRequests.find(
-      (volunteerRequest) => volunteerRequest._id == volunteerRequestId
-    );
-    deleteVolunteerRequest.volunteerRequests.pull(volunteerRequest);
-    await deleteVolunteerRequest.save();
-    res.send({
-      status: "200",
-      message: "Volunteer Request Deleted Successfully",
-    });
+    res.send({ status: "200", message: "Volunteer Request Deleted" });
   } catch (err) {
     console.log(err);
     res.send({ status: "500", message: "Error Deleting Volunteer Request" });
@@ -153,23 +105,15 @@ volunteerRouter.post("/deleteVolunteerRequest", async (req, res) => {
 
 volunteerRouter.post("/updateApplicantStatus", async (req, res) => {
   try {
-    const { hospitalEmail, volunteerRequestId, applicantId, requestStatus } =
-      req.body;
-    const hospital = await Volunteer.findOne({
-      hospitalEmail,
+    const { volunteerRequestId, applicantId, requestStatus } = req.body;
+    const volunteer = await Volunteer.findOneAndUpdate({
+      _id: volunteerRequestId,
     });
-    const volunteerRequest = hospital.volunteerRequests.find(
-      (request) => request._id == volunteerRequestId
-    );
-    const applicant = volunteerRequest.applicants.find(
-      (applicant) => applicant._id == applicantId
-    );
+
+    const applicant = volunteer.applicants.id(applicantId);
     applicant.applicantRequestStatus = requestStatus;
-    await hospital.save();
-    res.send({
-      status: "200",
-      message: "Volunteer Request Approved Successfully",
-    });
+    await volunteer.save();
+    res.send({ status: "200", message: "Applicant Status Updated" });
   } catch (err) {
     res.send({ status: "500", message: "Error Approving Volunteer Request" });
   }
@@ -177,19 +121,13 @@ volunteerRouter.post("/updateApplicantStatus", async (req, res) => {
 
 volunteerRouter.post("/disableOneVolunteerRequest", async (req, res) => {
   try {
-    const { hospitalEmail, volunteerRequestId } = req.body;
-    const disableVolunteerRequest = await Volunteer.findOne({
-      hospitalEmail,
+    const { volunteerRequestId } = req.body;
+    const volunteer = await Volunteer.findOneAndUpdate({
+      _id: volunteerRequestId,
     });
-    const volunteerRequest = disableVolunteerRequest.volunteerRequests.find(
-      (request) => request._id == volunteerRequestId
-    );
-    volunteerRequest.volunteerRequestStatus = "Disabled";
-    await disableVolunteerRequest.save();
-    res.send({
-      status: "200",
-      message: "Volunteer Request Disabled Successfully",
-    });
+    volunteer.requestStatus = "Disabled";
+    await volunteer.save();
+    res.send({ status: "200", message: "Volunteer Request Disabled" });
   } catch (err) {
     res.send({ status: "500", message: "Error Disabling Volunteer Request" });
   }
@@ -198,11 +136,11 @@ volunteerRouter.post("/disableOneVolunteerRequest", async (req, res) => {
 //app
 volunteerRouter.get("/fetchAllRequests", async (req, res) => {
   try {
-    const hospitalsRegistered = await Volunteer.find({});
+    const volunteerRequests = await Volunteer.find({});
     res.send({
       status: "200",
       message: "Volunteer Requests Fetched Successfully",
-      results: hospitalsRegistered,
+      results: volunteerRequests,
     });
   } catch (err) {
     res.send({ status: "500", message: "Error Fetching Volunteer Requests" });
@@ -212,7 +150,6 @@ volunteerRouter.get("/fetchAllRequests", async (req, res) => {
 volunteerRouter.post("/applyForVolunteerRequest", async (req, res) => {
   try {
     const {
-      hospitalEmail,
       volunteerRequestId,
       applicantEmail,
       applicantName,
@@ -221,25 +158,18 @@ volunteerRouter.post("/applyForVolunteerRequest", async (req, res) => {
     } = req.body;
     req.body;
 
-    const hospital = await Volunteer.findOne({
-      hospitalEmail,
+    const volunteer = await Volunteer.findOne({
+      _id: volunteerRequestId,
     });
-    const volunteerRequest = hospital.volunteerRequests.find(
-      (request) => request._id == volunteerRequestId
-    );
-
-    volunteerRequest.applicants.push({
-      applicantName,
+    volunteer.applicants.push({
       applicantEmail,
-      applicantPhone,
+      applicantName,
       applicantCnic,
+      applicantPhone,
     });
-    await hospital.save();
+    await volunteer.save();
 
-    res.send({
-      status: "200",
-      message: "Volunteer Request Applied Successfully",
-    });
+    res.send({ status: "200", message: "Volunteer Request Applied" });
   } catch (err) {
     console.log(err);
     res.send({ status: "500", message: "Error Applying Volunteer Request" });
@@ -249,38 +179,20 @@ volunteerRouter.post("/applyForVolunteerRequest", async (req, res) => {
 volunteerRouter.post("/fetchMyVolunteerRequests", async (req, res) => {
   try {
     const { applicantEmail } = req.body;
-
     const myRequests = [];
-    const allRequests = await Volunteer.find();
-    allRequests.forEach((hospital) => {
-      hospital.volunteerRequests.forEach((request) => {
-        request.applicants.forEach((applicant) => {
-          if (applicant.applicantEmail == applicantEmail) {
-            myRequests.push({
-              hospitalId: hospital._id,
-              hospitalName: hospital.hospitalName,
-              hospitalEmail: hospital.hospitalEmail,
-              hospitalPhone: hospital.hospitalPhone,
 
-              requestId: request._id,
-              requestTitle: request.volunteerRequestTitle,
-              requestTasks: request.volunteerTasks,
-              requestSkills: request.volunteersSkills,
-              requestTimeDuration: request.timeDuration,
-              requestAdditionalNotes: request.additionalNotes,
-
-              applicantRequestStatus: applicant.applicantRequestStatus,
-              applicantId: applicant._id,
-              applicantName: applicant.applicantName,
-              applicantEmail: applicant.applicantEmail,
-              applicantPhone: applicant.applicantPhone,
-              applicantCnic: applicant.applicantCnic,
-            });
-          }
-        }),
-          console.log(myRequests);
-      });
+    const volunteerRequests = await Volunteer.find({});
+    volunteerRequests.forEach((volunteerRequest) => {
+      volunteerRequest.applicants.forEach((applicant) => {
+        if (applicant.applicantEmail === applicantEmail) {
+          myRequests.push(volunteerRequest);
+        }
+      }),
+        (err) => {
+          console.log(err);
+        };
     });
+
     res.send({
       status: "200",
       message: "Volunteer Requests Fetched Successfully",

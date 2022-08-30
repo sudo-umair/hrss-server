@@ -8,6 +8,7 @@ const applicantSchema = new mongoose.Schema({
   applicantEmail: {
     type: String,
     required: true,
+    unique: true,
   },
   applicantPhone: {
     type: String,
@@ -24,39 +25,6 @@ const applicantSchema = new mongoose.Schema({
   },
 });
 
-const VolunteerRequestSchema = new mongoose.Schema({
-  volunteerRequestTitle: {
-    type: String,
-    required: true,
-  },
-  volunteersRequired: {
-    type: String,
-    required: true,
-  },
-  volunteerTasks: {
-    type: String,
-    required: true,
-  },
-  volunteersSkills: {
-    type: String,
-    required: true,
-  },
-  timeDuration: {
-    type: String,
-    required: true,
-  },
-  additionalNotes: {
-    type: String,
-    required: true,
-  },
-  requestStatus: {
-    default: "Enabled",
-    type: String,
-    required: true,
-  },
-  applicants: [applicantSchema],
-});
-
 const volunteerSchema = new mongoose.Schema({
   hospitalName: {
     type: String,
@@ -65,7 +33,6 @@ const volunteerSchema = new mongoose.Schema({
   hospitalEmail: {
     type: String,
     required: true,
-    unique: true,
   },
   hospitalPhone: {
     type: String,
@@ -75,7 +42,28 @@ const volunteerSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  volunteerRequests: [VolunteerRequestSchema],
+  volunteerRequestTitle: {
+    type: String,
+    required: true,
+  },
+  volunteerRequestDescription: {
+    type: String,
+    required: true,
+  },
+  volunteersRequired: {
+    type: String,
+    required: true,
+  },
+  timeDuration: {
+    type: String,
+    required: true,
+  },
+  requestStatus: {
+    default: "Enabled",
+    type: String,
+    required: true,
+  },
+  applicants: [applicantSchema],
 });
 
 export default mongoose.model("volunteers", volunteerSchema);
