@@ -49,7 +49,7 @@ const VolunteerRequestSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  RequestStatus: {
+  requestStatus: {
     default: "Enabled",
     type: String,
     required: true,
