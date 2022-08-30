@@ -24,7 +24,7 @@ const applicantSchema = new mongoose.Schema({
   },
 });
 
-const VolunteerRequestScheama = new mongoose.Schema({
+const VolunteerRequestSchema = new mongoose.Schema({
   volunteerRequestTitle: {
     type: String,
     required: true,
@@ -75,7 +75,7 @@ const volunteerSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  volunteerRequests: [VolunteerRequestScheama],
+  volunteerRequests: [VolunteerRequestSchema],
 });
 
 export default mongoose.model("volunteers", volunteerSchema);
