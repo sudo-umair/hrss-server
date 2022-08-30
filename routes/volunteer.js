@@ -151,6 +151,50 @@ volunteerRouter.post("/deleteVolunteerRequest", async (req, res) => {
   }
 });
 
+volunteerRouter.post("/updateApplicantStatus", async (req, res) => {
+  try {
+    const { hospitalEmail, volunteerRequestId, applicantId, requestStatus } =
+      req.body;
+    const hospital = await Volunteer.findOne({
+      hospitalEmail,
+    });
+    const volunteerRequest = hospital.volunteerRequests.find(
+      (request) => request._id == volunteerRequestId
+    );
+    const applicant = volunteerRequest.applicants.find(
+      (applicant) => applicant._id == applicantId
+    );
+    applicant.applicantRequestStatus = requestStatus;
+    await hospital.save();
+    res.send({
+      status: "200",
+      message: "Volunteer Request Approved Successfully",
+    });
+  } catch (err) {
+    res.send({ status: "500", message: "Error Approving Volunteer Request" });
+  }
+});
+
+volunteerRouter.post("/disableOneVolunteerRequest", async (req, res) => {
+  try {
+    const { hospitalEmail, volunteerRequestId } = req.body;
+    const disableVolunteerRequest = await Volunteer.findOne({
+      hospitalEmail,
+    });
+    const volunteerRequest = disableVolunteerRequest.volunteerRequests.find(
+      (request) => request._id == volunteerRequestId
+    );
+    volunteerRequest.volunteerRequestStatus = "Disabled";
+    await disableVolunteerRequest.save();
+    res.send({
+      status: "200",
+      message: "Volunteer Request Disabled Successfully",
+    });
+  } catch (err) {
+    res.send({ status: "500", message: "Error Disabling Volunteer Request" });
+  }
+});
+
 //app
 volunteerRouter.get("/fetchAllRequests", async (req, res) => {
   try {
@@ -165,29 +209,7 @@ volunteerRouter.get("/fetchAllRequests", async (req, res) => {
   }
 });
 
-//web optional
-volunteerRouter.post("/deleteVolunteerRequest", async (req, res) => {
-  try {
-    const { hospitalEmail, volunteerRequestId } = req.body;
-    const hospital = await Volunteer.findOne({
-      hospitalEmail,
-    });
-    const volunteerRequest = hospital.volunteerRequests.find(
-      (request) => request._id == volunteerRequestId
-    );
-    hospital.volunteerRequests.pull(volunteerRequest);
-    await hospital.save();
-    res.send({
-      status: "200",
-      message: "Volunteer Request Deleted Successfully",
-    });
-  } catch (err) {
-    res.send({ status: "500", message: "Error Deleting Volunteer Request" });
-  }
-});
-
-//app
-volunteerRouter.post("/applyVolunteerRequest", async (req, res) => {
+volunteerRouter.post("/applyForVolunteerRequest", async (req, res) => {
   try {
     const {
       hospitalEmail,
@@ -221,31 +243,6 @@ volunteerRouter.post("/applyVolunteerRequest", async (req, res) => {
   } catch (err) {
     console.log(err);
     res.send({ status: "500", message: "Error Applying Volunteer Request" });
-  }
-});
-
-//web
-volunteerRouter.post("/updateVolunteerRequestStatus", async (req, res) => {
-  try {
-    const { hospitalEmail, volunteerRequestId, applicantId, requestStatus } =
-      req.body;
-    const hospital = await Volunteer.findOne({
-      hospitalEmail,
-    });
-    const volunteerRequest = hospital.volunteerRequests.find(
-      (request) => request._id == volunteerRequestId
-    );
-    const applicant = volunteerRequest.applicants.find(
-      (applicant) => applicant._id == applicantId
-    );
-    applicant.applicantRequestStatus = requestStatus;
-    await hospital.save();
-    res.send({
-      status: "200",
-      message: "Volunteer Request Approved Successfully",
-    });
-  } catch (err) {
-    res.send({ status: "500", message: "Error Approving Volunteer Request" });
   }
 });
 

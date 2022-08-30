@@ -49,6 +49,11 @@ const VolunteerRequestScheama = new mongoose.Schema({
     type: String,
     required: true,
   },
+  RequestStatus: {
+    default: "Enabled",
+    type: String,
+    required: true,
+  },
   applicants: [applicantSchema],
 });
 
