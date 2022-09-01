@@ -207,18 +207,4 @@ volunteerRouter.post("/fetchMyVolunteerRequests", async (req, res) => {
   }
 });
 
-// const myRequests = [];
-
-// const volunteerRequests = await Volunteer.find({});
-// volunteerRequests.forEach((volunteerRequest) => {
-//   volunteerRequest.applicants.forEach((applicant) => {
-//     if (applicant.applicantEmail === applicantEmail) {
-//       myRequests.push(volunteerRequest);
-//     }
-//   }),
-//     (err) => {
-//       console.log(err);
-//     };
-// });
-
 export default volunteerRouter;
