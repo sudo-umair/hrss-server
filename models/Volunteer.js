@@ -8,7 +8,6 @@ const applicantSchema = new mongoose.Schema({
   applicantEmail: {
     type: String,
     required: true,
-    unique: true,
   },
   applicantPhone: {
     type: String,
