@@ -1,7 +1,5 @@
 import { Router } from "express";
 import Resource from "../models/Resource.js";
-import axios from "axios";
-import { baseUrlIndie, appId, appToken } from "../constants.js";
 import { sendNotificationToUser } from "./appNotifications.js";
 
 const resourceRouter = Router();
@@ -43,7 +41,7 @@ resourceRouter.post("/postRequest", (req, res) => {
       console.log(err);
       res.send({
         status: "500",
-        message: "Request Failed",
+        message: "Request Failed to Post",
         error: err,
       });
     });
