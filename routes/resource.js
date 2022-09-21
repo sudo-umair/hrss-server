@@ -103,7 +103,7 @@ resourceRouter.post("/totalNumberOfRequests", (req, res) => {
     });
 });
 
-resourceRouter.put("/updateRequest", (req, res) => {
+resourceRouter.put("/approveRequest", (req, res) => {
   const {
     id,
     requestStatus,
@@ -155,6 +155,44 @@ resourceRouter.put("/updateRequest", (req, res) => {
       res.send({
         status: "500",
         message: "Request Update Failed",
+        error: err,
+      });
+    });
+});
+
+resourceRouter.post("/deleteRequest", (req, res) => {
+  const { id } = req.body;
+  Resource.findById({
+    _id: id,
+  })
+    .then((resource) => {
+      if (resource.requestStatus !== "Pending") {
+        const { approvedByName } = resource;
+        res.send({
+          status: "500",
+          message: "Request Already Approved By " + approvedByName,
+        });
+      } else {
+        Resource.findByIdAndDelete(id)
+          .then((result) => {
+            res.send({
+              status: "200",
+              message: "Request Deleted Successfully",
+            });
+          })
+          .catch((err) => {
+            res.send({
+              status: "500",
+              message: "Request Delete Failed",
+              error: err,
+            });
+          });
+      }
+    })
+    .catch((err) => {
+      res.send({
+        status: "500",
+        message: "Request Delete Failed",
         error: err,
       });
     });
