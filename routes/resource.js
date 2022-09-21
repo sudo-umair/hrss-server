@@ -198,15 +198,4 @@ resourceRouter.post("/deleteRequest", (req, res) => {
     });
 });
 
-resourceRouter.get("/home", async (req, response) => {
-  resourceSch.find({}, (err, result) => {
-    if (err)
-      // res.send(err);
-      console.log("fail");
-    // console.log("hello")
-    else response.send(result);
-    // console.log(result);
-  });
-});
-
 export default resourceRouter;
