@@ -201,7 +201,9 @@ resourceRouter.post("/deleteRequest", (req, res) => {
 resourceRouter.put("/ignoreRequest", (req, res) => {
   const { id, email } = req.body;
 
-  Resource.findById(id)
+  Resource.findById({
+    _id: id,
+  })
     .then((resource) => {
       resource.ignoredBy.push(email);
       resource
