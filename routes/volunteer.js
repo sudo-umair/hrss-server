@@ -191,19 +191,27 @@ volunteerRouter.post("/applyForVolunteerRequest", async (req, res) => {
   }
 });
 
-volunteerRouter.post("/fetchMyVolunteerRequests", async (req, res) => {
+volunteerRouter.post("/cancelVolunteerRequest", async (req, res) => {
   try {
-    const { applicantEmail } = req.body;
-    const volunteerRequests = await Volunteer.find({
-      "applicants.applicantEmail": applicantEmail,
+    const { volunteerRequestId, applicantId } = req.body;
+    const volunteerRequest = await Volunteer.findOne({
+      _id: volunteerRequestId,
     });
-    res.send({
-      status: "200",
-      message: "Volunteer Requests Fetched Successfully",
-      results: volunteerRequests,
-    });
+    const applicant = volunteerRequest.applicants.id(applicantId);
+
+    if (applicant.applicantRequestStatus === "Approved") {
+      res.send({
+        status: "500",
+        message: "You cannot cancel this request as it has been approved",
+      });
+    } else {
+      volunteerRequest.applicants.pull(applicantId);
+      await volunteerRequest.save();
+      res.send({ status: "200", message: "Volunteer Request Cancelled" });
+    }
   } catch (err) {
-    res.send({ status: "500", message: "Error Fetching Volunteer Requests" });
+    console.log(err);
+    res.send({ status: "500", message: "Error Cancelling Volunteer Request" });
   }
 });
 
