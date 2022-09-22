@@ -198,4 +198,35 @@ resourceRouter.post("/deleteRequest", (req, res) => {
     });
 });
 
+resourceRouter.put("/ignoreRequest", (req, res) => {
+  const { id, email } = req.body;
+
+  Resource.findById(id)
+    .then((resource) => {
+      resource.ignoredBy.push(email);
+      resource
+        .save()
+        .then((result) => {
+          res.send({
+            status: "200",
+            message: "Request Ignored Successfully",
+          });
+        })
+        .catch((err) => {
+          res.send({
+            status: "500",
+            message: "Request Ignored Failed",
+            error: err,
+          });
+        });
+    })
+    .catch((err) => {
+      res.send({
+        status: "500",
+        message: "Request Ignored Failed",
+        error: err,
+      });
+    });
+});
+
 export default resourceRouter;

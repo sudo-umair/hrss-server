@@ -54,6 +54,11 @@ const resourceSchema = new mongoose.Schema({
     type: String,
     default: "Pending",
   },
+  ignoredBy: [
+    {
+      type: String,
+    },
+  ],
   createdAt: {
     type: Date,
     default: Date.now,
