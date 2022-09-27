@@ -63,6 +63,11 @@ const volunteerSchema = new mongoose.Schema({
     required: true,
   },
   applicants: [applicantSchema],
+  ignoredBy: [
+    {
+      type: String,
+    },
+  ],
 });
 
 export default mongoose.model("volunteers", volunteerSchema);

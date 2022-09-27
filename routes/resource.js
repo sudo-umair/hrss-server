@@ -198,7 +198,7 @@ resourceRouter.post("/deleteRequest", (req, res) => {
     });
 });
 
-resourceRouter.put("/ignoreRequest", (req, res) => {
+resourceRouter.put("/hideRequest", (req, res) => {
   const { id, email } = req.body;
 
   Resource.findById({

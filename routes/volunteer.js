@@ -191,20 +191,61 @@ volunteerRouter.post("/applyForVolunteerRequest", async (req, res) => {
   }
 });
 
-volunteerRouter.post("/fetchMyVolunteerRequests", async (req, res) => {
+volunteerRouter.post("/withdrawVolunteerRequest", async (req, res) => {
   try {
-    const { applicantEmail } = req.body;
-    const volunteerRequests = await Volunteer.find({
-      "applicants.applicantEmail": applicantEmail,
+    const { id, applicantEmail } = req.body;
+    const volunteerRequest = await Volunteer.findOne({
+      _id: id,
     });
-    res.send({
-      status: "200",
-      message: "Volunteer Requests Fetched Successfully",
-      results: volunteerRequests,
-    });
+
+    const applicant = volunteerRequest.applicants.find(
+      (applicant) => applicant.applicantEmail === applicantEmail
+    );
+
+    if (applicant.applicantRequestStatus === "Approved") {
+      res.send({
+        status: "500",
+        message: "You cannot withdraw your request as it has been approved",
+      });
+    } else {
+      volunteerRequest.applicants.pull(applicant);
+      await volunteerRequest.save();
+      res.send({ status: "200", message: "Volunteer Request Withdrawn" });
+    }
   } catch (err) {
-    res.send({ status: "500", message: "Error Fetching Volunteer Requests" });
+    res.send({ status: "500", message: "Error Withdrawing Volunteer Request" });
   }
+});
+
+volunteerRouter.post("/hideVolunteerRequest", (req, res) => {
+  const { id, applicantEmail } = req.body;
+
+  Volunteer.findOne({ _id: id })
+    .then((volunteerRequest) => {
+      volunteerRequest.ignoredBy.push(applicantEmail);
+      volunteerRequest
+        .save()
+        .then((result) => {
+          res.send({
+            status: "200",
+            message: "Request Ignored Successfully",
+          });
+        })
+        .catch((err) => {
+          res.send({
+            status: "500",
+            message: "Request Ignored Failed",
+            error: err,
+          });
+        });
+    })
+    .catch((err) => {
+      res.send({
+        status: "500",
+        message: "Request Ignored Failed",
+        error: err,
+      });
+    });
 });
 
 export default volunteerRouter;
