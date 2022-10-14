@@ -39,7 +39,11 @@ otpRouter.post("/forgotPassword", (req, res) => {
             newOtp
               .save()
               .then((response) => {
-                sendEmailToUser(email, "OTP", `Your OTP is: ${response.otp}`);
+                sendEmailToUser(
+                  email,
+                  "OTP",
+                  `Your OTP is: ${response.otp} for ${response.email}`
+                );
                 res.send({
                   status: "200",
                   message: "Otp sent successfully on " + email,
