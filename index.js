@@ -10,6 +10,7 @@ import donationRouter from "./routes/donations.js";
 import resourceRouter from "./routes/resource.js";
 import volunteerRouter from "./routes/volunteer.js";
 import appNotificationsRouter from "./routes/appNotifications.js";
+import otpRouter from "./routes/otp.js";
 
 connectToMongo();
 
@@ -24,6 +25,7 @@ app.use("/volunteers", volunteerRouter);
 app.use("/users", userRouter);
 app.use("/resources", resourceRouter);
 app.use("/donations", donationRouter);
+app.use("/otp", otpRouter);
 app.use("/notifications", appNotificationsRouter);
 
 const port = process.env.PORT || 4400;
