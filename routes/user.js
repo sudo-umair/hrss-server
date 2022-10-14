@@ -69,7 +69,7 @@ userRouter.post("/signin", (req, res) => {
       }
     })
     .catch((err) => {
-      res.send({ status: "500", message: "Error LoggingIn" });
+      res.send({ status: "500", message: "Error Logging In" });
     });
 });
 
@@ -91,12 +91,12 @@ userRouter.put("/updateAccount", (req, res) => {
               .then((user) => {
                 res.send({
                   status: "200",
-                  message: "Update Successful",
+                  message: "Account Updated",
                   user: user,
                 });
               })
               .catch((err) => {
-                res.send({ status: "500", message: "Error Updating" });
+                res.send({ status: "500", message: "Updating Account Failed" });
               });
           } else {
             res.send({ status: "400", message: "Invalid Password" });
@@ -105,7 +105,7 @@ userRouter.put("/updateAccount", (req, res) => {
       }
     })
     .catch((err) => {
-      res.send({ status: "500", message: "Error Updating" });
+      res.send({ status: "500", message: "Error Updating Account" });
     });
 });
 
@@ -125,12 +125,12 @@ userRouter.post("/deleteAccount", (req, res) => {
               .then((user) => {
                 res.send({
                   status: "200",
-                  message: "Delete Successful",
+                  message: "Account Deleted",
                   user: user,
                 });
               })
               .catch((err) => {
-                res.send({ status: "500", message: "Error Deleting" });
+                res.send({ status: "500", message: "Deleting Account Failed" });
               });
           } else {
             res.send({ status: "400", message: "Invalid Password" });
@@ -139,7 +139,7 @@ userRouter.post("/deleteAccount", (req, res) => {
       }
     })
     .catch((err) => {
-      res.send({ status: "500", message: "Error Deleting" });
+      res.send({ status: "500", message: "Deleting Account Failed" });
     });
 });
 

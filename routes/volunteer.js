@@ -154,7 +154,7 @@ volunteerRouter.get("/fetchAllRequests", async (req, res) => {
     const volunteerRequests = await Volunteer.find({});
     res.send({
       status: "200",
-      message: "Volunteer Requests Fetched Successfully",
+      message: "Volunteer Requests Fetched",
       results: volunteerRequests,
     });
   } catch (err) {
@@ -184,10 +184,13 @@ volunteerRouter.post("/applyForVolunteerRequest", async (req, res) => {
     });
     await volunteer.save();
 
-    res.send({ status: "200", message: "Volunteer Request Applied" });
+    res.send({ status: "200", message: " Applied for Volunteer Request" });
   } catch (err) {
     console.log(err);
-    res.send({ status: "500", message: "Error Applying Volunteer Request" });
+    res.send({
+      status: "500",
+      message: "Error Applying for Volunteer Request",
+    });
   }
 });
 
@@ -228,13 +231,13 @@ volunteerRouter.post("/hideVolunteerRequest", (req, res) => {
         .then((result) => {
           res.send({
             status: "200",
-            message: "Request Ignored Successfully",
+            message: "Request Hidden",
           });
         })
         .catch((err) => {
           res.send({
             status: "500",
-            message: "Request Ignored Failed",
+            message: "Hiding Request Failed",
             error: err,
           });
         });
@@ -242,7 +245,7 @@ volunteerRouter.post("/hideVolunteerRequest", (req, res) => {
     .catch((err) => {
       res.send({
         status: "500",
-        message: "Request Ignored Failed",
+        message: "Hiding Request Failed",
         error: err,
       });
     });

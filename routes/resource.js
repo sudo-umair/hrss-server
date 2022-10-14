@@ -34,7 +34,7 @@ resourceRouter.post("/postRequest", (req, res) => {
     .then((result) => {
       res.send({
         status: "201",
-        message: "Request Posted Successfully",
+        message: "Request Posted",
       });
     })
     .catch((err) => {
@@ -57,14 +57,14 @@ resourceRouter.post("/fetchRequests", (req, res) => {
       .then((result) => {
         res.send({
           status: "200",
-          message: "Requests Fetched Successfully",
+          message: "Requests Fetched",
           results: result,
         });
       })
       .catch((err) => {
         res.send({
           status: "500",
-          message: "Requests Failed",
+          message: "Fetching Requests Failed",
           error: err,
         });
       });
@@ -80,7 +80,7 @@ resourceRouter.post("/fetchRequests", (req, res) => {
       .catch((err) => {
         res.send({
           status: "500",
-          message: "Requests Failed",
+          message: "Fetching Requests Failed",
           error: err,
         });
       });
@@ -99,7 +99,7 @@ resourceRouter.post("/totalNumberOfRequests", (req, res) => {
       });
     })
     .catch((err) => {
-      res.send({ status: "500", message: "Error Fetching Requests" });
+      res.send({ status: "500", message: "Fetching Requests Failed" });
     });
 });
 
@@ -118,7 +118,7 @@ resourceRouter.put("/approveRequest", (req, res) => {
         const { approvedByName } = resource;
         res.send({
           status: "500",
-          message: "Request Already Approved By " + approvedByName,
+          message: "Request already approved by " + approvedByName,
         });
       } else {
         Resource.findByIdAndUpdate(id, {
@@ -139,13 +139,13 @@ resourceRouter.put("/approveRequest", (req, res) => {
             }
             res.send({
               status: "200",
-              message: "Request Updated Successfully",
+              message: "Request Approved",
             });
           })
           .catch((err) => {
             res.send({
               status: "500",
-              message: "Request Update Failed",
+              message: "Failed to Approve Request",
               error: err,
             });
           });
@@ -177,7 +177,7 @@ resourceRouter.post("/deleteRequest", (req, res) => {
           .then((result) => {
             res.send({
               status: "200",
-              message: "Request Deleted Successfully",
+              message: "Request Deleted",
             });
           })
           .catch((err) => {
@@ -211,13 +211,13 @@ resourceRouter.put("/hideRequest", (req, res) => {
         .then((result) => {
           res.send({
             status: "200",
-            message: "Request Ignored Successfully",
+            message: "Request Hidden",
           });
         })
         .catch((err) => {
           res.send({
             status: "500",
-            message: "Request Ignored Failed",
+            message: "Hiding Request Failed",
             error: err,
           });
         });
@@ -225,7 +225,7 @@ resourceRouter.put("/hideRequest", (req, res) => {
     .catch((err) => {
       res.send({
         status: "500",
-        message: "Request Ignored Failed",
+        message: "Hiding Request Failed",
         error: err,
       });
     });
