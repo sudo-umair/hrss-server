@@ -154,7 +154,7 @@ volunteerRouter.get("/fetchAllRequests", async (req, res) => {
     const volunteerRequests = await Volunteer.find({});
     res.send({
       status: "200",
-      message: "Volunteer Requests Fetched Successfully",
+      message: "Volunteer Requests Fetched",
       results: volunteerRequests,
     });
   } catch (err) {
@@ -184,35 +184,71 @@ volunteerRouter.post("/applyForVolunteerRequest", async (req, res) => {
     });
     await volunteer.save();
 
-    res.send({ status: "200", message: "Volunteer Request Applied" });
+    res.send({ status: "200", message: " Applied for Volunteer Request" });
   } catch (err) {
     console.log(err);
-    res.send({ status: "500", message: "Error Applying Volunteer Request" });
+    res.send({
+      status: "500",
+      message: "Error Applying for Volunteer Request",
+    });
   }
 });
 
-volunteerRouter.post("/cancelVolunteerRequest", async (req, res) => {
+volunteerRouter.post("/withdrawVolunteerRequest", async (req, res) => {
   try {
-    const { volunteerRequestId, applicantId } = req.body;
+    const { id, applicantEmail } = req.body;
     const volunteerRequest = await Volunteer.findOne({
-      _id: volunteerRequestId,
+      _id: id,
     });
-    const applicant = volunteerRequest.applicants.id(applicantId);
+
+    const applicant = volunteerRequest.applicants.find(
+      (applicant) => applicant.applicantEmail === applicantEmail
+    );
 
     if (applicant.applicantRequestStatus === "Approved") {
       res.send({
         status: "500",
-        message: "You cannot cancel this request as it has been approved",
+        message: "You cannot withdraw your request as it has been approved",
       });
     } else {
-      volunteerRequest.applicants.pull(applicantId);
+      volunteerRequest.applicants.pull(applicant);
       await volunteerRequest.save();
-      res.send({ status: "200", message: "Volunteer Request Cancelled" });
+      res.send({ status: "200", message: "Volunteer Request Withdrawn" });
     }
   } catch (err) {
-    console.log(err);
-    res.send({ status: "500", message: "Error Cancelling Volunteer Request" });
+    res.send({ status: "500", message: "Error Withdrawing Volunteer Request" });
   }
+});
+
+volunteerRouter.post("/hideVolunteerRequest", (req, res) => {
+  const { id, applicantEmail } = req.body;
+
+  Volunteer.findOne({ _id: id })
+    .then((volunteerRequest) => {
+      volunteerRequest.ignoredBy.push(applicantEmail);
+      volunteerRequest
+        .save()
+        .then((result) => {
+          res.send({
+            status: "200",
+            message: "Request Hidden",
+          });
+        })
+        .catch((err) => {
+          res.send({
+            status: "500",
+            message: "Hiding Request Failed",
+            error: err,
+          });
+        });
+    })
+    .catch((err) => {
+      res.send({
+        status: "500",
+        message: "Hiding Request Failed",
+        error: err,
+      });
+    });
 });
 
 export default volunteerRouter;
