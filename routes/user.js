@@ -1,19 +1,19 @@
-import { Router } from "express";
-import User from "../models/User.js";
+import { Router } from 'express';
+import User from '../models/User.js';
 
 const userRouter = Router();
 
-userRouter.post("/signup", (req, res) => {
+userRouter.post('/signup', (req, res) => {
   const { fName, lName, email, password, phone, cnic } = req.body;
   console.log(req.body);
 
   User.findOne({ email })
-    .then((user) => {
+    .then(async (user) => {
       if (user) {
-        res.send({ status: "400", message: "Account Already Exists" });
+        res.send({ status: '400', message: 'Account Already Exists' });
       } else {
         const newUser = new User({
-          name: fName + " " + lName,
+          name: fName + ' ' + lName,
           email,
           password,
           phone,
@@ -21,102 +21,112 @@ userRouter.post("/signup", (req, res) => {
         });
 
         newUser
-          .save()
-          .then((user) => {
+          .hashPassword(password)
+          .then(() => {
             res.send({
-              status: "201",
-              message: "SignUp Successful",
+              status: '201',
+              message: 'SignUp Successful',
             });
-            console.log(user);
+            console.log(newUser);
           })
           .catch((err) => {
-            res.send({ status: "500", message: "Signup Failed" });
+            res.send({ status: '500', message: 'Signup Failed' });
             console.log(err);
           });
       }
     })
     .catch((err) => {
-      res.send({ status: "500", message: "Error SigningUp" });
+      res.send({ status: '500', message: 'Error SigningUp' });
       console.log(err);
     });
 });
 
-userRouter.post("/signin", (req, res) => {
+userRouter.post('/signin', (req, res) => {
   const { email, password } = req.body;
   console.log(req.body);
 
   User.findOne({ email })
     .then((user) => {
       if (!user) {
-        res.send({ status: "400", message: "Account Does Not Exist" });
+        res.send({ status: '400', message: 'Account Does Not Exist' });
       } else {
         user
-          .isValidPassword(password)
+          .validatePassword(password)
           .then((isMatch) => {
             if (isMatch) {
-              res.send({
-                status: "200",
-                message: "Login Successful",
-                user: user,
-              });
+              user
+                .generateAuthToken()
+                .then(() => {
+                  res.send({
+                    status: '200',
+                    message: 'SignIn Successful',
+                    user: user,
+                  });
+                })
+                .catch((err) => {
+                  res.send({ status: '500', message: 'Error SigningIn' });
+                  console.log(err);
+                });
             } else {
-              res.send({ status: "400", message: "Invalid Password" });
+              res.send({ status: '400', message: 'Invalid Password' });
             }
           })
           .catch((err) => {
-            res.send({ status: "500", message: "Error Logging In" });
+            console.log(err);
+            res.send({ status: '500', message: 'Error SigningIn' });
           });
       }
     })
     .catch((err) => {
-      res.send({ status: "500", message: "Error Logging In" });
+      res.send({ status: '500', message: 'Error Signing In' });
     });
 });
 
-userRouter.put("/updateAccount", (req, res) => {
-  const { name, email, oldPassword, password, phone } = req.body;
+userRouter.put('/update-account', (req, res) => {
+  const { name, email, token, password, phone } = req.body;
   User.findOne({ email })
     .then((user) => {
       if (!user) {
-        res.send({ status: "400", message: "Account Does Not Exist" });
+        res.send({ status: '400', message: 'Account Does Not Exist' });
       } else {
-        user.isValidPassword(oldPassword).then((isMatch) => {
+        user.validateToken(token).then((isMatch) => {
           if (isMatch) {
             user.name = name;
-            user.password = password;
             user.phone = phone;
             user.updatedAt = Date.now();
             user
-              .save()
-              .then((user) => {
+              .hashPassword(password)
+              .then(() => {
                 res.send({
-                  status: "200",
-                  message: "Account Updated",
-                  user: user,
+                  status: '200',
+                  message: 'Account Updated',
+                  user,
                 });
               })
               .catch((err) => {
-                res.send({ status: "500", message: "Updating Account Failed" });
+                console.log(err);
+                res.send({ status: '500', message: 'Updating Account Failed' });
               });
           } else {
-            res.send({ status: "400", message: "Invalid Password" });
+            res.send({ status: '400', message: 'Invalid Token' });
           }
         });
       }
     })
     .catch((err) => {
-      res.send({ status: "500", message: "Error Updating Account" });
+      console.log(err);
+      res.send({ status: '500', message: 'Error Updating Account' });
     });
 });
 
-userRouter.post("/deleteAccount", (req, res) => {
+userRouter.post('/delete-account', (req, res) => {
   const { email, password } = req.body;
   console.log(req.body);
 
   User.findOne({ email })
     .then((user) => {
       if (!user) {
-        res.send({ status: "400", message: "Account Does Not Exist" });
+        res.send({ status: '400', message: 'Account Does Not Exist' });
       } else {
         user.isValidPassword(password).then((isMatch) => {
           if (isMatch) {
@@ -124,22 +134,87 @@ userRouter.post("/deleteAccount", (req, res) => {
               .remove()
               .then((user) => {
                 res.send({
-                  status: "200",
-                  message: "Account Deleted",
+                  status: '200',
+                  message: 'Account Deleted',
                   user: user,
                 });
               })
               .catch((err) => {
-                res.send({ status: "500", message: "Deleting Account Failed" });
+                res.send({ status: '500', message: 'Deleting Account Failed' });
               });
           } else {
-            res.send({ status: "400", message: "Invalid Password" });
+            res.send({ status: '400', message: 'Invalid Password' });
           }
         });
       }
     })
     .catch((err) => {
-      res.send({ status: "500", message: "Deleting Account Failed" });
+      res.send({ status: '500', message: 'Deleting Account Failed' });
+    });
+});
+
+userRouter.post('/signout', (req, res) => {
+  const { email, token } = req.body;
+  console.log(req.body);
+
+  User.findOne({ email })
+    .then((user) => {
+      if (!user) {
+        res.send({ status: '400', message: 'Account Does Not Exist' });
+      } else {
+        user.validateToken(token).then((isMatch) => {
+          if (isMatch) {
+            user
+              .removeToken()
+              .then(() => {
+                res.send({ status: '200', message: 'SignOut Successful' });
+              })
+              .catch((err) => {
+                res.send({ status: '500', message: 'Error SigningOut' });
+              });
+          } else {
+            res.send({ status: '400', message: 'Invalid Password' });
+          }
+        });
+      }
+    })
+    .catch((err) => {
+      res.send({ status: '500', message: 'Error SigningOut' });
+    });
+});
+
+userRouter.post('/resume-session', (req, res) => {
+  const { email, token } = req.body;
+  console.log(req.body);
+
+  User.findOne({ email })
+    .then((user) => {
+      if (!user) {
+        res.send({ status: '400', message: 'Account Does Not Exist' });
+      } else {
+        user
+          .validateToken(token)
+          .then((isMatch) => {
+            if (isMatch) {
+              res.send({
+                status: '200',
+                message: 'Resume Session Successful',
+                user,
+              });
+            } else {
+              res.send({ status: '400', message: 'Invalid Token' });
+            }
+          })
+          .catch((err) => {
+            console.log(err);
+            res.send({ status: '500', message: 'Error Resuming Session' });
+          });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+
+      res.send({ status: '500', message: 'Error Resuming Session' });
     });
 });
 

@@ -1,5 +1,6 @@
-import mongoose from "mongoose";
-import bcrypt from "bcryptjs";
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -22,6 +23,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+
+  token: {
+    type: String,
+  },
+
   createdAt: {
     type: Date,
     default: Date.now,
@@ -32,17 +38,38 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-userSchema.pre("save", async function (next) {
+userSchema.methods.hashPassword = async function (password) {
   const user = this;
-  const hashedPassword = await bcrypt.hash(user.password, 10);
+  const hashedPassword = await bcrypt.hash(password, 10);
   user.password = hashedPassword;
-  next();
-});
+  await user.save();
+};
 
-userSchema.methods.isValidPassword = async function (password) {
+userSchema.methods.validatePassword = async function (password) {
   const user = this;
   const compare = await bcrypt.compare(password, user.password);
   return compare;
 };
 
-export default mongoose.model("users", userSchema);
+userSchema.methods.generateAuthToken = async function () {
+  const user = this;
+  const token = jwt.sign({ _id: user._id }, process.env.SECRET_TOKEN);
+  user.token = token;
+  await user.save();
+};
+
+userSchema.methods.validateToken = async function (token) {
+  const user = this;
+  if (user.token === token) {
+    return true;
+  }
+  return false;
+};
+
+userSchema.methods.removeToken = async function () {
+  const user = this;
+  user.token = null;
+  await user.save();
+};
+
+export default mongoose.model('users', userSchema);
