@@ -83,7 +83,7 @@ userRouter.post('/signin', (req, res) => {
 });
 
 userRouter.put('/update-account', (req, res) => {
-  const { name, email, token, password, phone } = req.body;
+  const { name, email, token, phone } = req.body;
   User.findOne({ email })
     .then((user) => {
       if (!user) {
@@ -91,11 +91,8 @@ userRouter.put('/update-account', (req, res) => {
       } else {
         user.validateToken(token).then((isMatch) => {
           if (isMatch) {
-            user.name = name;
-            user.phone = phone;
-            user.updatedAt = Date.now();
             user
-              .hashPassword(password)
+              .updateAccount(name, phone)
               .then(() => {
                 res.send({
                   status: '200',
@@ -116,6 +113,55 @@ userRouter.put('/update-account', (req, res) => {
     .catch((err) => {
       console.log(err);
       res.send({ status: '500', message: 'Error Updating Account' });
+    });
+});
+
+userRouter.put('/update-password', (req, res) => {
+  const { email, token, password, newPassword } = req.body;
+  User.findOne({ email })
+    .then((user) => {
+      if (!user) {
+        res.send({ status: '400', message: 'Account Does Not Exist' });
+      } else {
+        user.validateToken(token).then((isMatch) => {
+          if (isMatch) {
+            user
+              .validatePassword(password)
+              .then((isMatch) => {
+                if (isMatch) {
+                  user
+                    .hashPassword(newPassword)
+                    .then(() => {
+                      res.send({
+                        status: '200',
+                        message: 'Password Updated',
+                        user,
+                      });
+                    })
+                    .catch((err) => {
+                      console.log(err);
+                      res.send({
+                        status: '500',
+                        message: 'Updating Password Failed',
+                      });
+                    });
+                } else {
+                  res.send({ status: '400', message: 'Invalid Password' });
+                }
+              })
+              .catch((err) => {
+                console.log(err);
+                res.send({ status: '500', message: 'Error Updating Password' });
+              });
+          } else {
+            res.send({ status: '400', message: 'Invalid Token' });
+          }
+        });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      res.send({ status: '500', message: 'Error Updating Password' });
     });
 });
 

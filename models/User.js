@@ -72,4 +72,11 @@ userSchema.methods.removeToken = async function () {
   await user.save();
 };
 
+userSchema.methods.updateAccount = async function (name, phone) {
+  const user = this;
+  user.name = name;
+  user.phone = phone;
+  await user.save();
+};
+
 export default mongoose.model('users', userSchema);
