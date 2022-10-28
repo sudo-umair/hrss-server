@@ -116,32 +116,22 @@ otpRouter.post('/resetPassword', (req, res) => {
     User.findOne({ email })
       .then((user) => {
         if (user) {
-          user.password = password;
-          user
-            .save()
-            .then((user) => {
-              res.send({
-                status: '200',
-                message: 'Password Reset Successful',
-              });
-              sendNotificationToUser(
-                email,
-                'Password Reset',
-                'Your password has been reset successfully',
-                {}
-              );
-            })
-            .catch((err) => {
-              console.log(err);
-              res.send({
-                status: '500',
-                message: 'Error Resetting Password',
-              });
+          user.hashPassword(password).then(() => {
+            res.send({
+              status: '200',
+              message: 'Password Reset Successfully',
             });
-        } else {
-          res.send({
-            status: '400',
-            message: 'Account Does Not Exist',
+          });
+          sendNotificationToUser(
+            email,
+            'Password Reset',
+            `Password for ${email} has been reset successfully`,
+            {}
+          );
+          Otp.findOneAndDelete({ email }).then((otp) => {
+            if (otp) {
+              console.log('OTP Deleted from DB');
+            }
           });
         }
       })
