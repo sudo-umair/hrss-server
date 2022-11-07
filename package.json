@@ -1,5 +1,5 @@
 {
-  "name": "hrss-server",
+  "name": "share-and-care-server",
   "version": "1.0.0",
   "main": "index.js",
   "type": "module",
