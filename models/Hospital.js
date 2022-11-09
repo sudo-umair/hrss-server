@@ -1,51 +1,46 @@
-import mongoose from "mongoose";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
-const hospitalSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-  username: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  email: {
-    type: String,
-    required: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  con_password: {
-    type: String,
-    required: true,
-  },
-  contact: {
-    type: Number,
-    required: true,
-  },
-  address: {
-    type: String,
-    required: true,
-  },
-  tokens: [
-    {
-      token: {
-        type: String,
-        required: true,
-      },
+const hospitalSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
     },
-  ],
-});
+    email: {
+      type: String,
+      required: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    contact: {
+      type: String,
+      required: true,
+    },
+    address: {
+      type: String,
+      required: true,
+    },
+    tokens: [
+      {
+        token: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
+  },
+  {
+    timestamps: true,
+  }
+);
 
-hospitalSchema.pre("save", async function (next) {
-  if (this.isModified("password")) {
+hospitalSchema.pre('save', async function (next) {
+  if (this.isModified('password')) {
     this.password = await bcrypt.hash(this.password, 12);
-    this.con_password = await bcrypt.hash(this.con_password, 12);
   }
   next();
 });
@@ -63,7 +58,6 @@ hospitalSchema.methods.generateToken = async function () {
   }
 };
 
-const user = new mongoose.model("hospitals", hospitalSchema);
-console.log("schema");
+const user = new mongoose.model('hospitals', hospitalSchema);
 
 export default user;

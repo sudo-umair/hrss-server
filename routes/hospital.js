@@ -1,61 +1,52 @@
-// const dotenv = require('dotenv').config();
-// import dotenv from 'dotenv'
-// import {} from 'dotenv/config'
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
 dotenv.config();
-import expresss from "express";
-import Hospital from "../models/Hospital.js";
-import mongoose from "mongoose";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import Authenticate from "../middleware/Authenticate.js";
+import expresss from 'express';
+import Hospital from '../models/Hospital.js';
+import bcrypt from 'bcryptjs';
+import Authenticate from '../middleware/Authenticate.js';
 
 const hospitalRouter = expresss.Router();
 
-hospitalRouter.post("/Signup", async (req, res) => {
-  const name = req.body.name;
-  const username = req.body.username;
-  const email = req.body.email;
-  const password = req.body.password;
-  const con_password = req.body.con_password;
-  const contact = req.body.contact;
-  const address = req.body.address;
+hospitalRouter.post('/Signup', async (req, res) => {
+  try {
+    const name = req.body.name;
+    const email = req.body.email;
+    const password = req.body.password;
+    const contact = req.body.contact;
+    const address = req.body.address;
 
-  const preHospital = await Hospital.findOne(
-    { username: username } && { email: email }
-  );
+    const preHospital = await Hospital.findOne({ email });
 
-  if (!preHospital) {
-    const addHospital = new Hospital({
-      name: name,
-      username: username,
-      email: email,
-      password: password,
-      con_password: con_password,
-      contact: contact,
-      address: address,
-    });
-    await addHospital.save();
-    res.send({ Message: "Signup Successful" });
-  } else {
-    res.send({ Message: "Username already Exist" });
+    if (!preHospital) {
+      const addHospital = new Hospital({
+        name: name,
+        email: email,
+        password: password,
+        contact: contact,
+        address: address,
+      });
+      await addHospital.save();
+      res.send({ status: 200, Message: 'Signup Successful' });
+    } else {
+      res.send({ Message: 'Username already Exist' });
+    }
+  } catch (err) {
+    res.send({ Message: 'Error in Signup' });
+    console.log(err);
   }
 });
 
-hospitalRouter.post("/", async (req, res) => {
-  const username = req.body.username;
-  const password = req.body.password;
-
-  const existing_user = await Hospital.findOne({ username: username });
-
+hospitalRouter.post('/', async (req, res) => {
   try {
-    if (existing_user) {
-      //comparing password and password that user has typed
-      const isMatch = await bcrypt.compare(password, existing_user.password);
+    const { email, password } = req.body;
 
+    const existing_user = await Hospital.findOne({ email });
+
+    if (existing_user) {
+      const isMatch = await bcrypt.compare(password, existing_user.password);
       const token = await existing_user.generateToken();
-      console.log("Hello from login router", token);
-      res.cookie("jwtoken", token, {
+      console.log('Hello from login router', token);
+      res.cookie('jwtoken', token, {
         httpOnly: true,
         expires: new Date(Date.now() + 500000000),
       });
@@ -64,7 +55,7 @@ hospitalRouter.post("/", async (req, res) => {
         // res.send(200, { message: "Login Successfull", user: existing_user });
         res.send({
           status: 200,
-          message: "Login Successfull",
+          message: 'Login Successfull',
           user: existing_user,
         });
       } else {
@@ -72,18 +63,18 @@ hospitalRouter.post("/", async (req, res) => {
         // res.send({ status: 400, error: "Password didn't match" })
       }
     } else {
-      res.send({ status: 403, error: "Account didnt exist" });
+      res.send({ status: 403, error: 'Account does not exist' });
     }
   } catch (error) {
     res.send(error);
   }
 });
 
-hospitalRouter.get("/Dashboard", Authenticate, async (req, res, next) => {
+hospitalRouter.get('/Dashboard', Authenticate, async (req, res, next) => {
   // hospitalRouter.use(cookieParser)
   // Authenticate();
   try {
-    console.log("hello");
+    console.log('hello');
     res.send();
   } catch (error) {
     res.send(error);

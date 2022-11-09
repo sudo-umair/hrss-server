@@ -1,8 +1,8 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 // const MONGO_URI = "mongodb://localhost:27017/hrss";
 
 const MONGO_URI =
-  "mongodb+srv://talha:talha1234@hrss.u1ubyta.mongodb.net/hrss?retryWrites=true&w=majority";
+  'mongodb+srv://talha:talha1234@hrss.u1ubyta.mongodb.net/hrss?retryWrites=true&w=majority';
 
 const connectToMongo = () => {
   try {
@@ -10,9 +10,9 @@ const connectToMongo = () => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
-    console.log("MongoDB connected");
+    console.log('MongoDB connected');
   } catch (err) {
-    console.log("Error in dbConn", err);
+    console.log('Error in dbConn', err);
   }
 };
 
