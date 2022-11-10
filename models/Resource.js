@@ -1,62 +1,77 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const resourceSchema = new mongoose.Schema({
   resourceName: {
     type: String,
     required: true,
+    trim: true,
   },
   resourceQuantity: {
     type: String,
     required: true,
+    trim: true,
   },
   resourceDuration: {
     type: String,
     required: true,
+    trim: true,
   },
   resourceNotes: {
     type: String,
-    default: "No Additional Notes Provided",
+    default: 'No Additional Notes Provided',
+    trim: true,
   },
   userType: {
     type: String,
     required: true,
-    default: "user",
+    default: 'user',
   },
   requestStatus: {
     type: String,
-    default: "Pending",
+    default: 'Pending',
+    trim: true,
   },
   requestedByName: {
     type: String,
     required: true,
+    trim: true,
   },
   requestedByEmail: {
     type: String,
     required: true,
+    trim: true,
+    lowercase: true,
   },
   requestedByPhone: {
     type: String,
     required: true,
+    trim: true,
   },
   requestedByAddress: {
     type: String,
     required: true,
+    trim: true,
   },
   approvedByName: {
     type: String,
-    default: "Pending",
+    default: 'Pending',
+    trim: true,
   },
   approvedByPhone: {
     type: String,
-    default: "Pending",
+    default: 'Pending',
+    trim: true,
   },
   approvedByEmail: {
     type: String,
-    default: "Pending",
+    default: 'Pending',
+    trim: true,
+    lowercase: true,
   },
   ignoredBy: [
     {
       type: String,
+      trim: true,
     },
   ],
   createdAt: {
@@ -69,4 +84,4 @@ const resourceSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.model("resources", resourceSchema);
+export default mongoose.model('resources', resourceSchema);

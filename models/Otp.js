@@ -1,5 +1,4 @@
-import mongoose from "mongoose";
-import bcrypt from "bcryptjs";
+import mongoose from 'mongoose';
 
 const otpSchema = new mongoose.Schema(
   {
@@ -7,6 +6,7 @@ const otpSchema = new mongoose.Schema(
       type: String,
       required: true,
       lowercase: true,
+      trim: true,
     },
     password: {
       type: String,
@@ -14,6 +14,7 @@ const otpSchema = new mongoose.Schema(
     otp: {
       type: String,
       required: true,
+      trim: true,
     },
   },
   {
@@ -21,4 +22,4 @@ const otpSchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.model("otp", otpSchema);
+export default mongoose.model('otp', otpSchema);

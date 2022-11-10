@@ -1,9 +1,10 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const donationSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
+    trim: true,
   },
   type: {
     type: String,
@@ -12,6 +13,7 @@ const donationSchema = new mongoose.Schema({
   website: {
     type: String,
     required: true,
+    trim: true,
   },
   phone: {
     type: String,
@@ -22,4 +24,4 @@ const donationSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.model("donations", donationSchema);
+export default mongoose.model('donations', donationSchema);
