@@ -1,10 +1,10 @@
-import Volunteer from "../models/Volunteer.js";
-import express from "express";
-import { sendNotificationToUser } from "./appNotifications.js";
+import Volunteer from '../models/Volunteer.js';
+import express from 'express';
+import { sendNotificationToUser } from './appNotifications.js';
 
 const volunteerRouter = express.Router();
 
-volunteerRouter.post("/createVolunteerRequest", async (req, res) => {
+volunteerRouter.post('/createVolunteerRequest', async (req, res) => {
   try {
     const {
       hospitalName,
@@ -30,81 +30,43 @@ volunteerRouter.post("/createVolunteerRequest", async (req, res) => {
 
     await volunteer.save();
 
-    res.send({ status: "200", message: "Volunteer Request Added" });
+    res.send({ status: '200', message: 'Volunteer Request Added' });
   } catch (err) {
     console.log(err);
-    res.send({ status: "500", message: "Error Adding Volunteer Request" });
+    res.send({ status: '500', message: 'Error Adding Volunteer Request' });
   }
 });
 
-volunteerRouter.post(
-  "/fetchAllVolunteerRequestsForOneHospital",
-  async (req, res) => {
-    try {
-      const { hospitalEmail } = req.body;
-      const volunteerRequests = await Volunteer.find({
-        hospitalEmail,
-      });
-      res.send({
-        status: "200",
-        message: "Volunteer Requests Fetched Successfully",
-        results: volunteerRequests,
-      });
-    } catch (err) {
-      res.send({ status: "500", message: "Error Fetching Volunteer Requests" });
-    }
-  }
-);
-
-volunteerRouter.put("/updateVolunteerRequest", async (req, res) => {
+volunteerRouter.post('/fetchMyVolunteerRequests', async (req, res) => {
   try {
-    const {
-      hospitalName,
+    const { hospitalEmail } = req.body;
+    const volunteerRequests = await Volunteer.find({
       hospitalEmail,
-      hospitalPhone,
-      hospitalLocation,
-      volunteerRequestTitle,
-      volunteerRequestDescription,
-      volunteersRequired,
-      timeDuration,
-    } = req.body;
-
-    const volunteer = await Volunteer.findOneAndUpdate(
-      {
-        hospitalEmail,
-      },
-      {
-        hospitalName,
-        hospitalEmail,
-        hospitalPhone,
-        hospitalLocation,
-        volunteerRequestTitle,
-        volunteerRequestDescription,
-        volunteersRequired,
-        timeDuration,
-      }
-    );
-    res.send({ status: "200", message: "Volunteer Request Updated" });
+    });
+    res.send({
+      status: '200',
+      message: 'Volunteer Requests Fetched Successfully',
+      results: volunteerRequests,
+    });
   } catch (err) {
-    console.log(err);
-    res.send({ status: "500", message: "Error Updating Volunteer Request" });
+    res.send({ status: '500', message: 'Error Fetching Volunteer Requests' });
   }
 });
 
-volunteerRouter.delete("/deleteVolunteerRequest", async (req, res) => {
+volunteerRouter.delete('/deleteVolunteerRequest', async (req, res) => {
   try {
     const { volunteerRequestId } = req.body;
     await Volunteer.findByIdAndDelete({
       _id: volunteerRequestId,
     });
-    res.send({ status: "200", message: "Volunteer Request Deleted" });
+    res.send({ status: '200', message: 'Volunteer Request Deleted' });
   } catch (err) {
     console.log(err);
-    res.send({ status: "500", message: "Error Deleting Volunteer Request" });
+    res.send({ status: '500', message: 'Error Deleting Volunteer Request' });
   }
 });
 
-volunteerRouter.post("/updateApplicantStatus", async (req, res) => {
+volunteerRouter.post('/updateApplicantStatus', async (req, res) => {
   try {
     const {
       volunteerRequestId,
@@ -123,46 +85,46 @@ volunteerRouter.post("/updateApplicantStatus", async (req, res) => {
 
     sendNotificationToUser(
       applicantEmail,
-      "Volunteer Request Status Updated",
+      'Volunteer Request Status Updated',
       `Your request has been ${requestStatus} by ${hospitalName}`,
-      ""
+      ''
     );
 
-    res.send({ status: "200", message: "Applicant Status Updated" });
+    res.send({ status: '200', message: 'Applicant Status Updated' });
   } catch (err) {
-    res.send({ status: "500", message: "Error Approving Volunteer Request" });
+    res.send({ status: '500', message: 'Error Approving Volunteer Request' });
   }
 });
 
-volunteerRouter.post("/disableOneVolunteerRequest", async (req, res) => {
+volunteerRouter.post('/disableVolunteerRequest', async (req, res) => {
   try {
     const { volunteerRequestId } = req.body;
     const volunteer = await Volunteer.findOneAndUpdate({
       _id: volunteerRequestId,
     });
-    volunteer.requestStatus = "Disabled";
+    volunteer.requestStatus = 'Disabled';
     await volunteer.save();
-    res.send({ status: "200", message: "Volunteer Request Disabled" });
+    res.send({ status: '200', message: 'Volunteer Request Disabled' });
   } catch (err) {
-    res.send({ status: "500", message: "Error Disabling Volunteer Request" });
+    res.send({ status: '500', message: 'Error Disabling Volunteer Request' });
   }
 });
 
 //app
-volunteerRouter.get("/fetchAllRequests", async (req, res) => {
+volunteerRouter.get('/fetchAllRequests', async (req, res) => {
   try {
     const volunteerRequests = await Volunteer.find({});
     res.send({
-      status: "200",
-      message: "Volunteer Requests Fetched",
+      status: '200',
+      message: 'Volunteer Requests Fetched',
       results: volunteerRequests,
     });
   } catch (err) {
-    res.send({ status: "500", message: "Error Fetching Volunteer Requests" });
+    res.send({ status: '500', message: 'Error Fetching Volunteer Requests' });
   }
 });
 
-volunteerRouter.post("/applyForVolunteerRequest", async (req, res) => {
+volunteerRouter.post('/applyForVolunteerRequest', async (req, res) => {
   try {
     const {
       volunteerRequestId,
@@ -184,17 +146,17 @@ volunteerRouter.post("/applyForVolunteerRequest", async (req, res) => {
     });
     await volunteer.save();
 
-    res.send({ status: "200", message: " Applied for Volunteer Request" });
+    res.send({ status: '200', message: ' Applied for Volunteer Request' });
   } catch (err) {
     console.log(err);
     res.send({
-      status: "500",
-      message: "Error Applying for Volunteer Request",
+      status: '500',
+      message: 'Error Applying for Volunteer Request',
     });
   }
 });
 
-volunteerRouter.post("/withdrawVolunteerRequest", async (req, res) => {
+volunteerRouter.post('/withdrawVolunteerRequest', async (req, res) => {
   try {
     const { id, applicantEmail } = req.body;
     const volunteerRequest = await Volunteer.findOne({
@@ -205,22 +167,22 @@ volunteerRouter.post("/withdrawVolunteerRequest", async (req, res) => {
       (applicant) => applicant.applicantEmail === applicantEmail
     );
 
-    if (applicant.applicantRequestStatus === "Approved") {
+    if (applicant.applicantRequestStatus === 'Approved') {
       res.send({
-        status: "500",
-        message: "You cannot withdraw your request as it has been approved",
+        status: '500',
+        message: 'You cannot withdraw your request as it has been approved',
       });
     } else {
       volunteerRequest.applicants.pull(applicant);
       await volunteerRequest.save();
-      res.send({ status: "200", message: "Volunteer Request Withdrawn" });
+      res.send({ status: '200', message: 'Volunteer Request Withdrawn' });
     }
   } catch (err) {
-    res.send({ status: "500", message: "Error Withdrawing Volunteer Request" });
+    res.send({ status: '500', message: 'Error Withdrawing Volunteer Request' });
   }
 });
 
-volunteerRouter.post("/hideVolunteerRequest", (req, res) => {
+volunteerRouter.post('/hideVolunteerRequest', (req, res) => {
   const { id, applicantEmail } = req.body;
 
   Volunteer.findOne({ _id: id })
@@ -230,22 +192,22 @@ volunteerRouter.post("/hideVolunteerRequest", (req, res) => {
         .save()
         .then((result) => {
           res.send({
-            status: "200",
-            message: "Request Hidden",
+            status: '200',
+            message: 'Request Hidden',
           });
         })
         .catch((err) => {
           res.send({
-            status: "500",
-            message: "Hiding Request Failed",
+            status: '500',
+            message: 'Hiding Request Failed',
             error: err,
           });
         });
     })
     .catch((err) => {
       res.send({
-        status: "500",
-        message: "Hiding Request Failed",
+        status: '500',
+        message: 'Hiding Request Failed',
         error: err,
       });
     });
