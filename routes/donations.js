@@ -1,22 +1,22 @@
-import { Router } from "express";
-import Donation from "../models/Donation.js";
+import { Router } from 'express';
+import Donation from '../models/Donation.js';
 
 const donationRouter = Router();
 
-donationRouter.get("/fetchDonations", (req, res) => {
+donationRouter.get('/fetchDonations', (req, res) => {
   Donation.find({})
     .then((result) => {
       res.send({
-        status: "200",
-        message: "Donations Fetched Successfully",
+        status: '200',
+        message: 'Donations Fetched Successfully',
         results: result,
       });
     })
     .catch((err) => {
-      console.log("Error in fetchDonations", err);
+      console.log('Error in fetchDonations', err);
       res.send({
-        status: "500",
-        message: "Fetching Donations Failed",
+        status: '500',
+        message: 'Fetching Donations Failed',
         data: err,
       });
     });

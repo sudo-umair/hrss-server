@@ -1,6 +1,6 @@
-import { appId, appToken, baseUrl, baseUrlIndie } from "../constants.js";
-import axios from "axios";
-import { Router } from "express";
+import { appId, appToken, baseUrl, baseUrlIndie } from '../constants.js';
+import axios from 'axios';
+import { Router } from 'express';
 
 export const sendNotificationToUser = async (
   userId,
@@ -52,30 +52,30 @@ export const sendNotificationToAll = async (title, body, pushData) => {
 
 const appNotificationsRouter = Router();
 
-appNotificationsRouter.post("/sendNotificationToAllUsers", (req, res) => {
+appNotificationsRouter.post('/sendNotificationToAllUsers', (req, res) => {
   const { title, body, pushData } = req.body;
   try {
     sendNotificationToAll(title, body, pushData);
     res.send({
-      message: "Notification Sent Successfully",
+      message: 'Notification Sent Successfully',
     });
   } catch (error) {
     console.log(error);
     res.send({
-      message: "Notification Failed",
+      message: 'Notification Failed',
       error: error,
     });
   }
 });
 
-appNotificationsRouter.post("/sendNotificationToOneUser", (req, res) => {
+appNotificationsRouter.post('/sendNotificationToOneUser', (req, res) => {
   const { userId, title, message, pushData } = req.body;
   try {
     sendNotificationToUser(userId, title, message, pushData);
-    res.send({ message: "Notification sent successfully" });
+    res.send({ message: 'Notification sent successfully' });
   } catch (error) {
     console.log(error);
-    res.send({ message: "Notification failed", error: error });
+    res.send({ message: 'Notification failed', error: error });
   }
 });
 

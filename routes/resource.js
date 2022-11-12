@@ -1,10 +1,10 @@
-import { Router } from "express";
-import Resource from "../models/Resource.js";
-import { sendNotificationToUser } from "./appNotifications.js";
+import { Router } from 'express';
+import Resource from '../models/Resource.js';
+import { sendNotificationToUser } from './appNotifications.js';
 
 const resourceRouter = Router();
 
-resourceRouter.post("/postRequest", (req, res) => {
+resourceRouter.post('/postRequest', (req, res) => {
   const {
     userType,
     resourceName,
@@ -33,77 +33,77 @@ resourceRouter.post("/postRequest", (req, res) => {
     .save()
     .then((result) => {
       res.send({
-        status: "201",
-        message: "Request Posted",
+        status: '201',
+        message: 'Request Posted',
       });
     })
     .catch((err) => {
       console.log(err);
       res.send({
-        status: "500",
-        message: "Request Failed to Post",
+        status: '500',
+        message: 'Request Failed to Post',
         error: err,
       });
     });
 });
 
-resourceRouter.post("/fetchRequests", (req, res) => {
+resourceRouter.post('/fetchRequests', (req, res) => {
   const { userType } = req.body;
-  if (userType === "user") {
+  if (userType === 'user') {
     // fetch requests where userType is user and email not equal to email and status is pending
     Resource.find({
-      userType: "user",
+      userType: 'user',
     })
       .then((result) => {
         res.send({
-          status: "200",
-          message: "Requests Fetched",
+          status: '200',
+          message: 'Requests Fetched',
           results: result,
         });
       })
       .catch((err) => {
         res.send({
-          status: "500",
-          message: "Fetching Requests Failed",
+          status: '500',
+          message: 'Fetching Requests Failed',
           error: err,
         });
       });
-  } else if (userType === "hospital") {
+  } else if (userType === 'hospital') {
     Resource.find({})
       .then((result) => {
         res.send({
-          status: "200",
-          message: "Requests Fetched Successfully",
+          status: '200',
+          message: 'Requests Fetched Successfully',
           data: result,
         });
       })
       .catch((err) => {
         res.send({
-          status: "500",
-          message: "Fetching Requests Failed",
+          status: '500',
+          message: 'Fetching Requests Failed',
           error: err,
         });
       });
   }
 });
 
-resourceRouter.post("/totalNumberOfRequests", (req, res) => {
+resourceRouter.post('/totalNumberOfRequests', (req, res) => {
   const { email } = req.body;
 
   Resource.find({ requestedByEmail: email })
     .then((resources) => {
       res.send({
-        status: "200",
-        message: "Requests Fetched Successfully",
+        status: '200',
+        message: 'Requests Fetched Successfully',
         data: resources.length,
       });
     })
     .catch((err) => {
-      res.send({ status: "500", message: "Fetching Requests Failed" });
+      res.send({ status: '500', message: 'Fetching Requests Failed' });
     });
 });
 
-resourceRouter.put("/approveRequest", (req, res) => {
+resourceRouter.put('/approveRequest', (req, res) => {
   const {
     id,
     requestStatus,
@@ -114,11 +114,11 @@ resourceRouter.put("/approveRequest", (req, res) => {
 
   Resource.findById(id)
     .then((resource) => {
-      if (resource.requestStatus !== "Pending") {
+      if (resource.requestStatus !== 'Pending') {
         const { approvedByName } = resource;
         res.send({
-          status: "500",
-          message: "Request already approved by " + approvedByName,
+          status: '500',
+          message: 'Request already approved by ' + approvedByName,
         });
       } else {
         Resource.findByIdAndUpdate(id, {
@@ -129,23 +129,23 @@ resourceRouter.put("/approveRequest", (req, res) => {
         })
           .then((result) => {
             const { resourceName, requestedByEmail, userType } = result;
-            if (userType === "user") {
+            if (userType === 'user') {
               sendNotificationToUser(
                 requestedByEmail,
-                "Request Approved",
+                'Request Approved',
                 `Your request for ${resourceName} has been approved by ${approvedByName}`,
-                ""
+                ''
               );
             }
             res.send({
-              status: "200",
-              message: "Request Approved",
+              status: '200',
+              message: 'Request Approved',
             });
           })
           .catch((err) => {
             res.send({
-              status: "500",
-              message: "Failed to Approve Request",
+              status: '500',
+              message: 'Failed to Approve Request',
               error: err,
             });
           });
@@ -153,37 +153,37 @@ resourceRouter.put("/approveRequest", (req, res) => {
     })
     .catch((err) => {
       res.send({
-        status: "500",
-        message: "Request Update Failed",
+        status: '500',
+        message: 'Request Update Failed',
         error: err,
       });
     });
 });
 
-resourceRouter.post("/deleteRequest", (req, res) => {
+resourceRouter.post('/deleteRequest', (req, res) => {
   const { id } = req.body;
   Resource.findById({
     _id: id,
   })
     .then((resource) => {
-      if (resource.requestStatus !== "Pending") {
+      if (resource.requestStatus !== 'Pending') {
         const { approvedByName } = resource;
         res.send({
-          status: "500",
-          message: "Request Already Approved By " + approvedByName,
+          status: '500',
+          message: 'Request Already Approved By ' + approvedByName,
         });
       } else {
         Resource.findByIdAndDelete(id)
           .then((result) => {
             res.send({
-              status: "200",
-              message: "Request Deleted",
+              status: '200',
+              message: 'Request Deleted',
             });
           })
           .catch((err) => {
             res.send({
-              status: "500",
-              message: "Request Delete Failed",
+              status: '500',
+              message: 'Request Delete Failed',
               error: err,
             });
           });
@@ -191,14 +191,14 @@ resourceRouter.post("/deleteRequest", (req, res) => {
     })
     .catch((err) => {
       res.send({
-        status: "500",
-        message: "Request Delete Failed",
+        status: '500',
+        message: 'Request Delete Failed',
         error: err,
       });
     });
 });
 
-resourceRouter.put("/hideRequest", (req, res) => {
+resourceRouter.put('/hideRequest', (req, res) => {
   const { id, email } = req.body;
 
   Resource.findById({
@@ -210,22 +210,22 @@ resourceRouter.put("/hideRequest", (req, res) => {
         .save()
         .then((result) => {
           res.send({
-            status: "200",
-            message: "Request Hidden",
+            status: '200',
+            message: 'Request Hidden',
           });
         })
         .catch((err) => {
           res.send({
-            status: "500",
-            message: "Hiding Request Failed",
+            status: '500',
+            message: 'Hiding Request Failed',
             error: err,
           });
         });
     })
     .catch((err) => {
       res.send({
-        status: "500",
-        message: "Hiding Request Failed",
+        status: '500',
+        message: 'Hiding Request Failed',
         error: err,
       });
     });
