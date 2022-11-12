@@ -2,6 +2,9 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
+import dotenv from 'dotenv';
+dotenv.config();
+
 const hospitalSchema = new mongoose.Schema(
   {
     name: {
@@ -30,40 +33,57 @@ const hospitalSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    tokens: [
-      {
-        token: {
-          type: String,
-          required: true,
-        },
-      },
-    ],
+    token: {
+      type: String,
+    },
   },
   {
     timestamps: true,
   }
 );
 
-hospitalSchema.pre('save', async function (next) {
-  if (this.isModified('password')) {
-    this.password = await bcrypt.hash(this.password, 12);
-  }
-  next();
-});
-
-//Generating Token
-hospitalSchema.methods.generateToken = async function () {
-  try {
-    console.log(process.env.SECRET_TOKEN);
-    let token = jwt.sign({ _id: this._id }, `${process.env.SECRET_TOKEN}`);
-    this.tokens = this.tokens.concat({ token: token });
-    await this.save();
-    return token;
-  } catch (error) {
-    console.log(error);
-  }
+hospitalSchema.methods.hashPassword = async function (password) {
+  const hospital = this;
+  const hashedPassword = await bcrypt.hash(password, 10);
+  hospital.password = hashedPassword;
+  await hospital.save();
 };
 
-const user = new mongoose.model('hospitals', hospitalSchema);
+hospitalSchema.methods.validatePassword = async function (password) {
+  const hospital = this;
+  const compare = await bcrypt.compare(password, hospital.password);
+  return compare;
+};
 
-export default user;
+hospitalSchema.methods.generateAuthToken = async function () {
+  const hospital = this;
+  const token = jwt.sign({ _id: hospital._id }, process.env.SECRET_TOKEN);
+  hospital.token = token;
+  await hospital.save();
+};
+
+hospitalSchema.methods.validateToken = async function (token) {
+  const hospital = this;
+  if (hospital.token === token) {
+    return true;
+  }
+  return false;
+};
+
+hospitalSchema.methods.removeToken = async function () {
+  const hospital = this;
+  hospital.token = null;
+  await hospital.save();
+};
+
+hospitalSchema.methods.updateAccount = async function (name, contact, address) {
+  const hospital = this;
+  hospital.name = name;
+  hospital.contact = contact;
+  hospital.address = address;
+  await hospital.save();
+};
+
+const hospital = new mongoose.model('hospitals', hospitalSchema);
+
+export default hospital;
