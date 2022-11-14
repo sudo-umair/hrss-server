@@ -57,14 +57,14 @@ userSchema.methods.validatePassword = async function (password) {
 
 userSchema.methods.generateAuthToken = async function () {
   const user = this;
-  const token = jwt.sign({ _id: user._id }, process.env.SECRET_TOKEN);
+  const token = await jwt.sign({ _id: user._id }, process.env.SECRET_TOKEN);
   user.token = token;
   await user.save();
 };
 
 userSchema.methods.validateToken = async function (token) {
   const user = this;
-  const decoded = jwt.verify(token, process.env.SECRET_TOKEN);
+  const decoded = await jwt.verify(token, process.env.SECRET_TOKEN);
   if (decoded._id === user._id) {
     return true;
   }
