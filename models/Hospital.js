@@ -57,16 +57,18 @@ hospitalSchema.methods.validatePassword = async function (password) {
 
 hospitalSchema.methods.generateAuthToken = async function () {
   const hospital = this;
-  const token = jwt.sign({ _id: hospital._id }, process.env.SECRET_TOKEN);
+  const token = await jwt.sign({ _id: hospital._id }, process.env.SECRET_TOKEN);
   hospital.token = token;
   await hospital.save();
 };
 
 hospitalSchema.methods.validateToken = async function (token) {
   const hospital = this;
-  if (hospital.token === token) {
+  const decoded = await jwt.verify(token, process.env.SECRET_TOKEN);
+  if (decoded._id === hospital._id.toString()) {
     return true;
   }
+
   return false;
 };
 
