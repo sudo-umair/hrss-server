@@ -64,7 +64,8 @@ userSchema.methods.generateAuthToken = async function () {
 
 userSchema.methods.validateToken = async function (token) {
   const user = this;
-  if (user.token === token) {
+  const decoded = jwt.verify(token, process.env.SECRET_TOKEN);
+  if (decoded._id === user._id) {
     return true;
   }
   return false;
