@@ -8,8 +8,11 @@ const otpSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
-    password: {
+    userType: {
       type: String,
+      required: true,
+      lowercase: true,
+      trim: true,
     },
     otp: {
       type: String,

@@ -8,17 +8,17 @@ import { sendNotificationToUser } from './appNotifications.js';
 
 const otpRouter = Router();
 
-otpRouter.post('/forgotPassword', (req, res) => {
+otpRouter.post('/forgotPassword', async (req, res) => {
   const { email, userType } = req.body;
   console.log(req.body);
 
   if (userType === 'user') {
-    User.findOne({ email })
-      .then((user) => {
+    await User.findOne({ email })
+      .then(async (user) => {
         if (!user) {
           res.send({ status: '400', message: 'Account Does Not Exist' });
         } else {
-          Otp.findOne({ email }).then((otp) => {
+          await Otp.findOne({ email, userType }).then(async (otp) => {
             if (otp) {
               res.send({
                 status: '400',
@@ -33,12 +33,13 @@ otpRouter.post('/forgotPassword', (req, res) => {
                 specialChars: false,
               });
 
-              const newOtp = new Otp({
+              const newOtp = await new Otp({
                 email,
                 otp,
+                userType,
               });
 
-              newOtp
+              await newOtp
                 .save()
                 .then((response) => {
                   sendEmailToUser(
@@ -50,12 +51,15 @@ otpRouter.post('/forgotPassword', (req, res) => {
                     status: '200',
                     message: 'Otp sent successfully on ' + email,
                   });
-                  setTimeout(() => {
-                    Otp.findOneAndDelete({ email }).then((otp) => {
-                      if (otp) {
-                        console.log('OTP Deleted from DB');
+
+                  setTimeout(async () => {
+                    await Otp.findOneAndDelete({ email, userType }).then(
+                      (otp) => {
+                        if (otp) {
+                          console.log('OTP Deleted from DB');
+                        }
                       }
-                    });
+                    );
                   }, 120000);
                 })
                 .catch((err) => {
@@ -77,12 +81,12 @@ otpRouter.post('/forgotPassword', (req, res) => {
         });
       });
   } else if (userType === 'hospital') {
-    Hospital.findOne({ email })
-      .then((hospital) => {
+    await Hospital.findOne({ email })
+      .then(async (hospital) => {
         if (!hospital) {
           res.send({ status: '400', message: 'Account Does Not Exist' });
         } else {
-          Otp.findOne({ email }).then((otp) => {
+          await Otp.findOne({ email, userType }).then(async (otp) => {
             if (otp) {
               res.send({
                 status: '400',
@@ -97,12 +101,13 @@ otpRouter.post('/forgotPassword', (req, res) => {
                 specialChars: false,
               });
 
-              const newOtp = new Otp({
+              const newOtp = await new Otp({
                 email,
                 otp,
+                userType,
               });
 
-              newOtp
+              await newOtp
                 .save()
                 .then((response) => {
                   sendEmailToUser(
@@ -114,12 +119,14 @@ otpRouter.post('/forgotPassword', (req, res) => {
                     status: '200',
                     message: 'Otp sent successfully on ' + email,
                   });
-                  setTimeout(() => {
-                    Otp.findOneAndDelete({ email }).then((otp) => {
-                      if (otp) {
-                        console.log('OTP Deleted from DB');
+                  setTimeout(async () => {
+                    await Otp.findOneAndDelete({ email, userType }).then(
+                      (otp) => {
+                        if (otp) {
+                          console.log('OTP Deleted from DB');
+                        }
                       }
-                    });
+                    );
                   }, 120000);
                 })
                 .catch((err) => {
@@ -144,9 +151,9 @@ otpRouter.post('/forgotPassword', (req, res) => {
 });
 
 otpRouter.post('/verifyOtp', (req, res) => {
-  const { email, otp } = req.body;
+  const { email, userType, otp } = req.body;
 
-  Otp.findOne({ email })
+  Otp.findOne({ email, userType })
     .then((otpData) => {
       if (otpData) {
         if (otpData.otp === otp) {
@@ -212,26 +219,22 @@ otpRouter.post('/resetPassword', (req, res) => {
     Hospital.findOne({ email })
       .then((hospital) => {
         if (hospital) {
-          hospital.password = password;
-          hospital
-            .save()
-            .then((hospital) => {
-              res.send({
-                status: '200',
-                message: 'Password Reset Successful',
-              });
-            })
-            .catch((err) => {
-              console.log(err);
-              res.send({
-                status: '500',
-                message: 'Error Resetting Password',
-              });
+          hospital.hashPassword(password).then(() => {
+            res.send({
+              status: '200',
+              message: 'Password Reset Successfully',
             });
-        } else {
-          res.send({
-            status: '400',
-            message: 'Account Does Not Exist',
+          });
+          sendNotificationToUser(
+            email,
+            'Password Reset',
+            `Password for ${email} has been reset successfully`,
+            {}
+          );
+          Otp.findOneAndDelete({ email, userType }).then((otp) => {
+            if (otp) {
+              console.log('OTP Deleted from DB');
+            }
           });
         }
       })
