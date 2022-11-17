@@ -50,7 +50,6 @@ resourceRouter.post('/postRequest', (req, res) => {
 resourceRouter.post('/fetchRequests', (req, res) => {
   const { userType } = req.body;
   if (userType === 'user') {
-    // fetch requests where userType is user and email not equal to email and status is pending
     Resource.find({
       userType: 'user',
     })
@@ -74,7 +73,7 @@ resourceRouter.post('/fetchRequests', (req, res) => {
         res.send({
           status: '200',
           message: 'Requests Fetched Successfully',
-          data: result,
+          results: result,
         });
       })
       .catch((err) => {
