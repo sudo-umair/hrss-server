@@ -23,7 +23,7 @@ const hospitalSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    contact: {
+    phone: {
       type: String,
       required: true,
       trim: true,
@@ -78,10 +78,10 @@ hospitalSchema.methods.removeToken = async function () {
   await hospital.save();
 };
 
-hospitalSchema.methods.updateAccount = async function (name, contact, address) {
+hospitalSchema.methods.updateAccount = async function (name, phone, address) {
   const hospital = this;
   hospital.name = name;
-  hospital.contact = contact;
+  hospital.phone = phone;
   hospital.address = address;
   await hospital.save();
 };

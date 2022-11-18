@@ -6,7 +6,7 @@ import Volunteer from '../models/Volunteer.js';
 const hospitalRouter = Router();
 
 hospitalRouter.post('/signup', (req, res) => {
-  const { name, email, password, contact, address } = req.body;
+  const { name, email, password, phone, address } = req.body;
   console.log(req.body);
 
   Hospital.findOne({ email })
@@ -18,7 +18,7 @@ hospitalRouter.post('/signup', (req, res) => {
           name,
           email,
           password,
-          contact,
+          phone,
           address,
         });
 
@@ -86,7 +86,7 @@ hospitalRouter.post('/signin', (req, res) => {
 });
 
 hospitalRouter.put('/update-account', (req, res) => {
-  const { name, email, token, contact, address } = req.body;
+  const { name, email, token, phone, address } = req.body;
   Hospital.findOne({ email })
     .then((hospital) => {
       if (!hospital) {
@@ -95,7 +95,7 @@ hospitalRouter.put('/update-account', (req, res) => {
         hospital.validateToken(token).then((isMatch) => {
           if (isMatch) {
             hospital
-              .updateAccount(name, contact, address)
+              .updateAccount(name, phone, address)
               .then(() => {
                 res.send({
                   status: '200',
