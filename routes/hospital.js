@@ -5,11 +5,11 @@ import Volunteer from '../models/Volunteer.js';
 
 const hospitalRouter = Router();
 
-hospitalRouter.post('/signup', (req, res) => {
+hospitalRouter.post('/signup', async (req, res) => {
   const { name, email, password, phone, address } = req.body;
   console.log(req.body);
 
-  Hospital.findOne({ email })
+  await Hospital.findOne({ email })
     .then(async (hospital) => {
       if (hospital) {
         res.send({ status: '400', message: 'Account Already Exists' });
@@ -22,7 +22,7 @@ hospitalRouter.post('/signup', (req, res) => {
           address,
         });
 
-        newHospital
+        await newHospital
           .hashPassword(password)
           .then(() => {
             res.send({
@@ -43,20 +43,20 @@ hospitalRouter.post('/signup', (req, res) => {
     });
 });
 
-hospitalRouter.post('/signin', (req, res) => {
+hospitalRouter.post('/signin', async (req, res) => {
   const { email, password } = req.body;
   console.log(req.body);
 
-  Hospital.findOne({ email })
-    .then((hospital) => {
+  await Hospital.findOne({ email })
+    .then(async (hospital) => {
       if (!hospital) {
         res.send({ status: '400', message: 'Account Does Not Exist' });
       } else {
-        hospital
+        await hospital
           .validatePassword(password)
-          .then((isMatch) => {
+          .then(async (isMatch) => {
             if (isMatch) {
-              hospital
+              await hospital
                 .generateAuthToken()
                 .then(() => {
                   console.log(hospital);
@@ -85,16 +85,16 @@ hospitalRouter.post('/signin', (req, res) => {
     });
 });
 
-hospitalRouter.put('/update-account', (req, res) => {
+hospitalRouter.put('/update-account', async (req, res) => {
   const { name, email, token, phone, address } = req.body;
-  Hospital.findOne({ email })
-    .then((hospital) => {
+  await Hospital.findOne({ email })
+    .then(async (hospital) => {
       if (!hospital) {
         res.send({ status: '400', message: 'Account Does Not Exist' });
       } else {
-        hospital.validateToken(token).then((isMatch) => {
+        await hospital.validateToken(token).then(async (isMatch) => {
           if (isMatch) {
-            hospital
+            await hospital
               .updateAccount(name, phone, address)
               .then(() => {
                 res.send({
@@ -119,20 +119,20 @@ hospitalRouter.put('/update-account', (req, res) => {
     });
 });
 
-hospitalRouter.put('/update-password', (req, res) => {
+hospitalRouter.put('/update-password', async (req, res) => {
   const { email, token, password, newPassword } = req.body;
-  Hospital.findOne({ email })
-    .then((hospital) => {
+  await Hospital.findOne({ email })
+    .then(async (hospital) => {
       if (!hospital) {
         res.send({ status: '400', message: 'Account Does Not Exist' });
       } else {
-        hospital.validateToken(token).then((isMatch) => {
+        await hospital.validateToken(token).then(async (isMatch) => {
           if (isMatch) {
-            hospital
+            await hospital
               .validatePassword(password)
-              .then((isMatch) => {
+              .then(async (isMatch) => {
                 if (isMatch) {
-                  hospital
+                  await hospital
                     .hashPassword(newPassword)
                     .then(() => {
                       res.send({
@@ -168,18 +168,18 @@ hospitalRouter.put('/update-password', (req, res) => {
     });
 });
 
-hospitalRouter.post('/delete-account', (req, res) => {
+hospitalRouter.post('/delete-account', async (req, res) => {
   const { email, token } = req.body;
   console.log(req.body);
 
-  Hospital.findOne({ email })
-    .then((hospital) => {
+  await Hospital.findOne({ email })
+    .then(async (hospital) => {
       if (!hospital) {
         res.send({ status: '400', message: 'Account Does Not Exist' });
       } else {
-        hospital.validateToken(token).then((isValid) => {
+        await hospital.validateToken(token).then(async (isValid) => {
           if (isValid) {
-            Hospital.findByIdAndDelete(hospital._id)
+            await Hospital.findByIdAndDelete(hospital._id)
               .then(() => {
                 res.send({ status: '200', message: 'Account Deleted' });
               })
@@ -197,18 +197,18 @@ hospitalRouter.post('/delete-account', (req, res) => {
     });
 });
 
-hospitalRouter.post('/signout', (req, res) => {
+hospitalRouter.post('/signout', async (req, res) => {
   const { email, token } = req.body;
   console.log(req.body);
 
-  Hospital.findOne({ email })
-    .then((hospital) => {
+  await Hospital.findOne({ email })
+    .then(async (hospital) => {
       if (!hospital) {
         res.send({ status: '400', message: 'Account Does Not Exist' });
       } else {
-        hospital.validateToken(token).then((isMatch) => {
+        await hospital.validateToken(token).then(async (isMatch) => {
           if (isMatch) {
-            hospital
+            await hospital
               .removeToken()
               .then(() => {
                 res.send({ status: '200', message: 'SignOut Successful' });
@@ -224,41 +224,6 @@ hospitalRouter.post('/signout', (req, res) => {
     })
     .catch((err) => {
       res.send({ status: '500', message: 'Error SigningOut' });
-    });
-});
-
-hospitalRouter.post('/resume-session', (req, res) => {
-  const { email, token } = req.body;
-  console.log(req.body);
-
-  Hospital.findOne({ email })
-    .then((hospital) => {
-      if (!hospital) {
-        res.send({ status: '400', message: 'Account Does Not Exist' });
-      } else {
-        hospital
-          .validateToken(token)
-          .then((isMatch) => {
-            if (isMatch) {
-              res.send({
-                status: '200',
-                message: 'Resume Session Successful',
-                hospital,
-              });
-            } else {
-              res.send({ status: '400', message: 'Invalid Token' });
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-            res.send({ status: '500', message: 'Error Resuming Session' });
-          });
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-
-      res.send({ status: '500', message: 'Error Resuming Session' });
     });
 });
 
