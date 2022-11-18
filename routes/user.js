@@ -3,11 +3,11 @@ import User from '../models/User.js';
 
 const userRouter = Router();
 
-userRouter.post('/signup', (req, res) => {
+userRouter.post('/signup', async (req, res) => {
   const { fName, lName, email, password, phone, cnic } = req.body;
   console.log(req.body);
 
-  User.findOne({ email })
+  await User.findOne({ email })
     .then(async (user) => {
       if (user) {
         res.send({ status: '400', message: 'Account Already Exists' });
@@ -20,7 +20,7 @@ userRouter.post('/signup', (req, res) => {
           cnic,
         });
 
-        newUser
+        await newUser
           .hashPassword(password)
           .then(() => {
             res.send({
@@ -41,20 +41,20 @@ userRouter.post('/signup', (req, res) => {
     });
 });
 
-userRouter.post('/signin', (req, res) => {
+userRouter.post('/signin', async (req, res) => {
   const { email, password } = req.body;
   console.log(req.body);
 
-  User.findOne({ email })
-    .then((user) => {
+  await User.findOne({ email })
+    .then(async (user) => {
       if (!user) {
         res.send({ status: '400', message: 'Account Does Not Exist' });
       } else {
-        user
+        await user
           .validatePassword(password)
-          .then((isMatch) => {
+          .then(async (isMatch) => {
             if (isMatch) {
-              user
+              await user
                 .generateAuthToken()
                 .then(() => {
                   res.send({
@@ -82,16 +82,16 @@ userRouter.post('/signin', (req, res) => {
     });
 });
 
-userRouter.put('/update-account', (req, res) => {
+userRouter.put('/update-account', async (req, res) => {
   const { name, email, token, phone } = req.body;
-  User.findOne({ email })
-    .then((user) => {
+  await User.findOne({ email })
+    .then(async (user) => {
       if (!user) {
         res.send({ status: '400', message: 'Account Does Not Exist' });
       } else {
-        user.validateToken(token).then((isMatch) => {
+        await user.validateToken(token).then(async (isMatch) => {
           if (isMatch) {
-            user
+            await user
               .updateAccount(name, phone)
               .then(() => {
                 res.send({
@@ -116,20 +116,20 @@ userRouter.put('/update-account', (req, res) => {
     });
 });
 
-userRouter.put('/update-password', (req, res) => {
+userRouter.put('/update-password', async (req, res) => {
   const { email, token, password, newPassword } = req.body;
-  User.findOne({ email })
-    .then((user) => {
+  await User.findOne({ email })
+    .then(async (user) => {
       if (!user) {
         res.send({ status: '400', message: 'Account Does Not Exist' });
       } else {
-        user.validateToken(token).then((isMatch) => {
+        await user.validateToken(token).then(async (isMatch) => {
           if (isMatch) {
-            user
+            await user
               .validatePassword(password)
-              .then((isMatch) => {
+              .then(async (isMatch) => {
                 if (isMatch) {
-                  user
+                  await user
                     .hashPassword(newPassword)
                     .then(() => {
                       res.send({
@@ -165,25 +165,20 @@ userRouter.put('/update-password', (req, res) => {
     });
 });
 
-userRouter.post('/delete-account', (req, res) => {
-  const { email, password } = req.body;
+userRouter.post('/delete-account', async (req, res) => {
+  const { email, token } = req.body;
   console.log(req.body);
 
-  User.findOne({ email })
-    .then((user) => {
+  await User.findOne({ email })
+    .then(async (user) => {
       if (!user) {
         res.send({ status: '400', message: 'Account Does Not Exist' });
       } else {
-        user.isValidPassword(password).then((isMatch) => {
-          if (isMatch) {
-            user
-              .remove()
-              .then((user) => {
-                res.send({
-                  status: '200',
-                  message: 'Account Deleted',
-                  user: user,
-                });
+        await user.validateToken(token).then(async (isValid) => {
+          if (isValid) {
+            await User.findByIdAndDelete(user._id)
+              .then(() => {
+                res.send({ status: '200', message: 'Account Deleted' });
               })
               .catch((err) => {
                 res.send({ status: '500', message: 'Deleting Account Failed' });
@@ -199,18 +194,18 @@ userRouter.post('/delete-account', (req, res) => {
     });
 });
 
-userRouter.post('/signout', (req, res) => {
+userRouter.post('/signout', async (req, res) => {
   const { email, token } = req.body;
   console.log(req.body);
 
-  User.findOne({ email })
-    .then((user) => {
+  await User.findOne({ email })
+    .then(async (user) => {
       if (!user) {
         res.send({ status: '400', message: 'Account Does Not Exist' });
       } else {
-        user.validateToken(token).then((isMatch) => {
+        await user.validateToken(token).then(async (isMatch) => {
           if (isMatch) {
-            user
+            await user
               .removeToken()
               .then(() => {
                 res.send({ status: '200', message: 'SignOut Successful' });
@@ -229,16 +224,16 @@ userRouter.post('/signout', (req, res) => {
     });
 });
 
-userRouter.post('/resume-session', (req, res) => {
+userRouter.post('/resume-session', async (req, res) => {
   const { email, token } = req.body;
   console.log(req.body);
 
-  User.findOne({ email })
-    .then((user) => {
+  await User.findOne({ email })
+    .then(async (user) => {
       if (!user) {
         res.send({ status: '400', message: 'Account Does Not Exist' });
       } else {
-        user
+        await user
           .validateToken(token)
           .then((isMatch) => {
             if (isMatch) {
@@ -259,7 +254,6 @@ userRouter.post('/resume-session', (req, res) => {
     })
     .catch((err) => {
       console.log(err);
-
       res.send({ status: '500', message: 'Error Resuming Session' });
     });
 });
