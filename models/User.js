@@ -64,11 +64,15 @@ userSchema.methods.generateAuthToken = async function () {
 
 userSchema.methods.validateToken = async function (token) {
   const user = this;
-  const decoded = await jwt.verify(token, process.env.SECRET_TOKEN);
-  if (decoded._id === user._id.toString()) {
-    return true;
+  try {
+    const decoded = await jwt.verify(token, process.env.SECRET_TOKEN);
+    if (decoded._id === user._id.toString()) {
+      return true;
+    }
+  } catch (err) {
+    console.log(err.message);
+    return false;
   }
-  return false;
 };
 
 userSchema.methods.removeToken = async function () {

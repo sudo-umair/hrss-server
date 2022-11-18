@@ -64,12 +64,15 @@ hospitalSchema.methods.generateAuthToken = async function () {
 
 hospitalSchema.methods.validateToken = async function (token) {
   const hospital = this;
-  const decoded = await jwt.verify(token, process.env.SECRET_TOKEN);
-  if (decoded._id === hospital._id.toString()) {
-    return true;
+  try {
+    const decoded = await jwt.verify(token, process.env.SECRET_TOKEN);
+    if (decoded._id === hospital._id.toString()) {
+      return true;
+    }
+  } catch (err) {
+    console.log(err);
+    return false;
   }
-
-  return false;
 };
 
 hospitalSchema.methods.removeToken = async function () {
