@@ -169,7 +169,7 @@ hospitalRouter.put('/update-password', (req, res) => {
 });
 
 hospitalRouter.post('/delete-account', (req, res) => {
-  const { email, password } = req.body;
+  const { email, token } = req.body;
   console.log(req.body);
 
   Hospital.findOne({ email })
@@ -177,16 +177,11 @@ hospitalRouter.post('/delete-account', (req, res) => {
       if (!hospital) {
         res.send({ status: '400', message: 'Account Does Not Exist' });
       } else {
-        hospital.isValidPassword(password).then((isMatch) => {
-          if (isMatch) {
-            hospital
-              .remove()
-              .then((hospital) => {
-                res.send({
-                  status: '200',
-                  message: 'Account Deleted',
-                  hospital,
-                });
+        hospital.validateToken(token).then((isValid) => {
+          if (isValid) {
+            Hospital.findByIdAndDelete(hospital._id)
+              .then(() => {
+                res.send({ status: '200', message: 'Account Deleted' });
               })
               .catch((err) => {
                 res.send({ status: '500', message: 'Deleting Account Failed' });
