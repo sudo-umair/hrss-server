@@ -160,9 +160,10 @@ resourceRouter.put('/approveRequest', (req, res) => {
 });
 
 resourceRouter.post('/deleteRequest', (req, res) => {
-  const { id } = req.body;
+  const { id, email } = req.body;
   Resource.findById({
     _id: id,
+    requestedByEmail: email,
   })
     .then((resource) => {
       if (resource.requestStatus !== 'Pending') {
@@ -172,7 +173,10 @@ resourceRouter.post('/deleteRequest', (req, res) => {
           message: 'Request Already Approved By ' + approvedByName,
         });
       } else {
-        Resource.findByIdAndDelete(id)
+        Resource.findByIdAndDelete({
+          _id: id,
+          requestedByEmail: email,
+        })
           .then((result) => {
             res.send({
               status: '200',
@@ -202,6 +206,7 @@ resourceRouter.put('/hideRequest', (req, res) => {
 
   Resource.findById({
     _id: id,
+    requestedByEmail: email,
   })
     .then((resource) => {
       resource.ignoredBy.push(email);
