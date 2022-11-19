@@ -161,7 +161,7 @@ resourceRouter.put('/approveRequest', (req, res) => {
 
 resourceRouter.post('/deleteRequest', (req, res) => {
   const { id, email } = req.body;
-  Resource.findById({
+  Resource.find({
     _id: id,
     requestedByEmail: email,
   })
