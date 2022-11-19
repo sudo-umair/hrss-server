@@ -66,7 +66,6 @@ const resourceSchema = new mongoose.Schema({
     type: String,
     default: 'Pending',
     trim: true,
-    lowercase: true,
   },
   ignoredBy: [
     {

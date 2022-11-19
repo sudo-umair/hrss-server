@@ -159,29 +159,21 @@ resourceRouter.put('/approveRequest', (req, res) => {
     });
 });
 
-resourceRouter.post('/deleteRequest', (req, res) => {
+resourceRouter.post('/deleteRequest', async (req, res) => {
   const { id, email } = req.body;
-  Resource.find({
+  await Resource.findOne({
     _id: id,
     requestedByEmail: email,
   })
     .then((resource) => {
-      if (resource.requestStatus !== 'Pending') {
-        const { approvedByName } = resource;
-        res.send({
-          status: '500',
-          message: 'Request Already Approved By ' + approvedByName,
-        });
-      } else {
-        Resource.findByIdAndDelete({
-          _id: id,
-          requestedByEmail: email,
-        })
+      if (resource.requestStatus === 'Pending') {
+        Resource.findByIdAndDelete(id)
           .then((result) => {
             res.send({
               status: '200',
               message: 'Request Deleted',
             });
+            console.log('that');
           })
           .catch((err) => {
             res.send({
@@ -190,6 +182,12 @@ resourceRouter.post('/deleteRequest', (req, res) => {
               error: err,
             });
           });
+        console.log('this');
+      } else {
+        res.send({
+          status: '500',
+          message: `Request Already Approved By ${resource.approvedByName}`,
+        });
       }
     })
     .catch((err) => {
@@ -204,29 +202,37 @@ resourceRouter.post('/deleteRequest', (req, res) => {
 resourceRouter.put('/hideRequest', (req, res) => {
   const { id, email } = req.body;
 
-  Resource.findById({
+  Resource.findOne({
     _id: id,
-    requestedByEmail: email,
   })
     .then((resource) => {
-      resource.ignoredBy.push(email);
-      resource
-        .save()
-        .then((result) => {
-          res.send({
-            status: '200',
-            message: 'Request Hidden',
+      if (resource) {
+        resource.ignoredBy.push(email);
+        resource
+          .save()
+          .then((result) => {
+            res.send({
+              status: '200',
+              message: 'Request Hidden',
+            });
+          })
+          .catch((err) => {
+            console.log(err);
+            res.send({
+              status: '500',
+              message: 'Hiding Request Failed',
+              error: err,
+            });
           });
-        })
-        .catch((err) => {
-          res.send({
-            status: '500',
-            message: 'Hiding Request Failed',
-            error: err,
-          });
+      } else {
+        res.send({
+          status: '500',
+          message: 'Resource Request Not Found',
         });
+      }
     })
     .catch((err) => {
+      console.log(err);
       res.send({
         status: '500',
         message: 'Hiding Request Failed',
