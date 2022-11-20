@@ -97,13 +97,13 @@ volunteerRouter.post('/updateApplicantStatus', async (req, res) => {
 volunteerRouter.post('/updateVolunteerRequest', async (req, res) => {
   try {
     const { volunteerRequestId, requestStatus } = req.body;
-    const volunteer = await Volunteer.findOneAndUpdate({
-      _id: volunteerRequestId,
+    const volunteer = await Volunteer.findByIdAndUpdate(volunteerRequestId, {
+      requestStatus,
     });
-    volunteer.requestStatus = requestStatus;
     await volunteer.save();
     res.send({ status: '200', message: `Volunteer Request ${requestStatus}` });
   } catch (err) {
+    console.log(err);
     res.send({ status: '500', message: 'Error Updating Volunteer Request' });
   }
 });
