@@ -96,17 +96,17 @@ volunteerRouter.post('/updateApplicantStatus', async (req, res) => {
   }
 });
 
-volunteerRouter.post('/disableVolunteerRequest', async (req, res) => {
+volunteerRouter.post('/updateVolunteerRequest', async (req, res) => {
   try {
-    const { volunteerRequestId } = req.body;
+    const { volunteerRequestId, requestStatus } = req.body;
     const volunteer = await Volunteer.findOneAndUpdate({
       _id: volunteerRequestId,
     });
-    volunteer.requestStatus = 'Disabled';
+    volunteer.requestStatus = requestStatus;
     await volunteer.save();
-    res.send({ status: '200', message: 'Volunteer Request Disabled' });
+    res.send({ status: '200', message: `Volunteer Request ${requestStatus}` });
   } catch (err) {
-    res.send({ status: '500', message: 'Error Disabling Volunteer Request' });
+    res.send({ status: '500', message: 'Error Updating Volunteer Request' });
   }
 });
 
