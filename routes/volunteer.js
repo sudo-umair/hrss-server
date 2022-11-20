@@ -53,12 +53,10 @@ volunteerRouter.post('/fetchMyVolunteerRequests', async (req, res) => {
   }
 });
 
-volunteerRouter.delete('/deleteVolunteerRequest', async (req, res) => {
+volunteerRouter.post('/deleteVolunteerRequest', async (req, res) => {
   try {
     const { volunteerRequestId } = req.body;
-    await Volunteer.findByIdAndDelete({
-      _id: volunteerRequestId,
-    });
+    await Volunteer.findByIdAndDelete(volunteerRequestId);
     res.send({ status: '200', message: 'Volunteer Request Deleted' });
   } catch (err) {
     console.log(err);
