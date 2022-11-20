@@ -1,6 +1,9 @@
 import Volunteer from '../models/Volunteer.js';
 import express from 'express';
-import { sendNotificationToUser } from './appNotifications.js';
+import {
+  sendNotificationToUser,
+  sendNotificationToGroup,
+} from './appNotifications.js';
 
 const volunteerRouter = express.Router();
 
@@ -101,7 +104,18 @@ volunteerRouter.post('/updateVolunteerRequest', async (req, res) => {
       requestStatus,
     });
     await volunteer.save();
+
     res.send({ status: '200', message: `Volunteer Request ${requestStatus}` });
+
+    const emails = volunteer.applicants.map((applicant) => {
+      return applicant.applicantEmail;
+    });
+
+    sendNotificationToGroup(
+      emails,
+      `Volunteer Requests ${requestStatus}`,
+      `${volunteer.hospitalName} has ${requestStatus} requests for ${volunteer.volunteerRequestTitle}`
+    );
   } catch (err) {
     console.log(err);
     res.send({ status: '500', message: 'Error Updating Volunteer Request' });

@@ -19,7 +19,7 @@ export const sendNotificationToUser = async (
         pushData,
       })
       .then((response) => {
-        // console.log(response);
+        console.log(response.data);
       })
       .catch((error) => {
         console.log(error);
@@ -40,7 +40,7 @@ export const sendNotificationToAll = async (title, body, pushData) => {
         pushData,
       })
       .then((response) => {
-        // console.log(response);
+        console.log(response.data);
       })
       .catch((error) => {
         console.log(error);
@@ -50,33 +50,23 @@ export const sendNotificationToAll = async (title, body, pushData) => {
   }
 };
 
-const appNotificationsRouter = Router();
-
-appNotificationsRouter.post('/sendNotificationToAllUsers', (req, res) => {
-  const { title, body, pushData } = req.body;
+export const sendNotificationToGroup = async (emails, title, body) => {
   try {
-    sendNotificationToAll(title, body, pushData);
-    res.send({
-      message: 'Notification Sent Successfully',
-    });
+    axios
+      .post(`https://app.nativenotify.com/api/indie/group/notification`, {
+        subIDs: emails,
+        appId: appId,
+        appToken: appToken,
+        title: title,
+        message: body,
+      })
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   } catch (error) {
     console.log(error);
-    res.send({
-      message: 'Notification Failed',
-      error: error,
-    });
   }
-});
-
-appNotificationsRouter.post('/sendNotificationToOneUser', (req, res) => {
-  const { userId, title, message, pushData } = req.body;
-  try {
-    sendNotificationToUser(userId, title, message, pushData);
-    res.send({ message: 'Notification sent successfully' });
-  } catch (error) {
-    console.log(error);
-    res.send({ message: 'Notification failed', error: error });
-  }
-});
-
-export default appNotificationsRouter;
+};
