@@ -68,20 +68,22 @@ volunteerRouter.post('/deleteVolunteerRequest', async (req, res) => {
 });
 
 volunteerRouter.post('/updateApplicantStatus', async (req, res) => {
+  const {
+    volunteerRequestId,
+    applicantId,
+    applicantEmail,
+    hospitalName,
+    requestStatus,
+  } = req.body;
   try {
-    const {
-      volunteerRequestId,
-      applicantId,
-      applicantEmail,
-      hospitalName,
-      requestStatus,
-    } = req.body;
-    const volunteer = await Volunteer.findOneAndUpdate({
-      _id: volunteerRequestId,
-    });
+    const volunteer = await Volunteer.findById(volunteerRequestId);
 
-    const applicant = volunteer.applicants.id(applicantId);
+    const applicant = volunteer.applicants.find(
+      (applicant) => applicant._id == applicantId
+    );
+
     applicant.applicantRequestStatus = requestStatus;
+
     await volunteer.save();
 
     sendNotificationToUser(
@@ -90,27 +92,35 @@ volunteerRouter.post('/updateApplicantStatus', async (req, res) => {
       `Your request has been ${requestStatus} by ${hospitalName}`,
       ''
     );
-
-    res.send({ status: '200', message: 'Applicant Status Updated' });
+    res.send({
+      status: '200',
+      message: `${applicant.applicantName} is ${requestStatus}`,
+    });
   } catch (err) {
-    res.send({ status: '500', message: 'Error Approving Volunteer Request' });
+    console.log(err);
+    res.send({
+      status: '500',
+      message: `Error ${requestStatus.slice(0, -2)}ing ${
+        applicant.applicantName
+      }`,
+    });
   }
 });
 
 volunteerRouter.post('/updateVolunteerRequest', async (req, res) => {
+  const { volunteerRequestId, requestStatus } = req.body;
   try {
-    const { volunteerRequestId, requestStatus } = req.body;
     const volunteer = await Volunteer.findByIdAndUpdate(volunteerRequestId, {
       requestStatus,
     });
     await volunteer.save();
-
-    res.send({ status: '200', message: `Volunteer Request ${requestStatus}` });
-
+    res.send({
+      status: '200',
+      message: `Volunteer Request is ${requestStatus}`,
+    });
     const emails = volunteer.applicants.map((applicant) => {
       return applicant.applicantEmail;
     });
-
     sendNotificationToGroup(
       emails,
       `Volunteer Requests ${requestStatus}`,
@@ -118,7 +128,10 @@ volunteerRouter.post('/updateVolunteerRequest', async (req, res) => {
     );
   } catch (err) {
     console.log(err);
-    res.send({ status: '500', message: 'Error Updating Volunteer Request' });
+    res.send({
+      status: '500',
+      message: `Error ${requestStatus.slice(0, -2)}ing Volunteer Request`,
+    });
   }
 });
 
