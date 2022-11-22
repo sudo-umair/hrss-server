@@ -69,6 +69,7 @@ hospitalSchema.methods.validateToken = async function (token) {
     if (decoded._id === hospital._id.toString()) {
       return true;
     }
+    return false;
   } catch (err) {
     console.log(err);
     return false;
