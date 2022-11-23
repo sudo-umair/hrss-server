@@ -1,6 +1,5 @@
 import express from 'express';
 import cors from 'cors';
-import cookieParser from 'cookie-parser';
 import connectToMongo from './db/dbconn.js'; //connect to mongoDB
 
 //import routes
@@ -17,7 +16,6 @@ const app = express();
 
 app.use(cors({ credentials: true, origin: true }));
 app.use(express.json());
-app.use(cookieParser());
 
 app.use('/hospitals', hospitalRouter);
 app.use('/volunteers', volunteerRouter);
