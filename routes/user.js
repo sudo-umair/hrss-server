@@ -83,7 +83,7 @@ userRouter.post('/signin', async (req, res) => {
 });
 
 userRouter.put('/update-account', async (req, res) => {
-  const { name, email, token, phone } = req.body;
+  const { name, email, token, phone, address } = req.body;
   await User.findOne({ email })
     .then(async (user) => {
       if (!user) {
@@ -92,7 +92,7 @@ userRouter.put('/update-account', async (req, res) => {
         await user.validateToken(token).then(async (isMatch) => {
           if (isMatch) {
             await user
-              .updateAccount(name, phone)
+              .updateAccount(name, phone, address)
               .then(() => {
                 res.send({
                   status: '200',

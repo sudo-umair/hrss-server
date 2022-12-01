@@ -33,6 +33,11 @@ const userSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    address: {
+      type: String,
+      default: '',
+      trim: true,
+    },
     token: {
       type: String,
     },
@@ -81,10 +86,11 @@ userSchema.methods.removeToken = async function () {
   await user.save();
 };
 
-userSchema.methods.updateAccount = async function (name, phone) {
+userSchema.methods.updateAccount = async function (name, phone, address) {
   const user = this;
   user.name = name;
   user.phone = phone;
+  user.address = address;
   await user.save();
 };
 
