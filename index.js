@@ -27,7 +27,12 @@ app.use('/otp', otpRouter);
 const port = process.env.PORT || 4400;
 
 app.get('/', (req, res) => {
-  res.send('Server is running on port ' + port);
+  try {
+    res.send('Server is running on port ' + port);
+  } catch (error) {
+    res.status(500).send(error);
+    console.log(error);
+  }
 });
 
 app.listen(port, () => {
