@@ -90,7 +90,9 @@ volunteerRouter.post('/updateApplicantStatus', async (req, res) => {
       applicantEmail,
       'Volunteer Request Status Updated',
       `Your request has been ${requestStatus} by ${hospitalName}`,
-      ''
+      {
+        screen: 'Volunteers',
+      }
     );
     res.send({
       status: '200',
