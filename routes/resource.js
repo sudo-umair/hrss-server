@@ -133,7 +133,7 @@ resourceRouter.put('/approveRequest', (req, res) => {
                 requestedByEmail,
                 'Request Approved',
                 `Your request for ${resourceName} has been approved by ${approvedByName}`,
-                ''
+                '{"screen": "Resources"}'
               );
             }
             res.send({

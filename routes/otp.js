@@ -199,7 +199,7 @@ otpRouter.post('/resetPassword', (req, res) => {
             email,
             'Password Reset',
             `Password for ${email} has been reset successfully`,
-            {}
+            '{"screen": "Account"}'
           );
           Otp.findOneAndDelete({ email }).then((otp) => {
             if (otp) {
@@ -225,12 +225,6 @@ otpRouter.post('/resetPassword', (req, res) => {
               message: 'Password Reset Successfully',
             });
           });
-          sendNotificationToUser(
-            email,
-            'Password Reset',
-            `Password for ${email} has been reset successfully`,
-            {}
-          );
           Otp.findOneAndDelete({ email, userType }).then((otp) => {
             if (otp) {
               console.log('OTP Deleted from DB');
