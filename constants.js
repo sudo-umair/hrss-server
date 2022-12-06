@@ -1,5 +1,5 @@
-export const appId = 4493;
-export const appToken = 'cKld3b9BpMji38mIQiUrbE';
+export const appId = 5176;
+export const appToken = 'AC8kvmfgzQJT72ZKWstWWt';
 
 export const baseUrl = 'https://app.nativenotify.com/api/notification';
 export const baseUrlIndie =
