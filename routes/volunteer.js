@@ -77,34 +77,26 @@ volunteerRouter.post('/updateApplicantStatus', async (req, res) => {
   } = req.body;
   try {
     const volunteer = await Volunteer.findById(volunteerRequestId);
-
     const applicant = volunteer.applicants.find(
       (applicant) => applicant._id == applicantId
     );
-
     applicant.applicantRequestStatus = requestStatus;
-
     await volunteer.save();
-
-    sendNotificationToUser(
-      applicantEmail,
-      'Volunteer Request Status Updated',
-      `Your request has been ${requestStatus} by ${hospitalName}`,
-      {
-        screen: 'Volunteers',
-      }
-    );
     res.send({
       status: '200',
       message: `${applicant.applicantName} is ${requestStatus}`,
     });
+    sendNotificationToUser(
+      applicantEmail,
+      'Volunteer Request Status Updated',
+      `Your request has been ${requestStatus} by ${hospitalName}`,
+      '{"screen":"Volunteers"}'
+    );
   } catch (err) {
     console.log(err);
     res.send({
       status: '500',
-      message: `Error ${requestStatus.slice(0, -2)}ing ${
-        applicant.applicantName
-      }`,
+      message: `Error ${requestStatus.slice(0, -2)}ing Applicant`,
     });
   }
 });
