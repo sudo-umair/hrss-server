@@ -30,7 +30,6 @@ const hospitalSchema = new mongoose.Schema(
     },
     website: {
       type: String,
-      required: true,
       trim: true,
     },
     address: {
