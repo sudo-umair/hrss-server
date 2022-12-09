@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import Donation from '../models/Donation.js';
+import Hospital from '../models/Hospital.js';
 
 const donationRouter = Router();
 
 donationRouter.get('/fetchDonations', (req, res) => {
-  Donation.find({})
+  Hospital.find({})
     .then((result) => {
       res.send({
         status: '200',
