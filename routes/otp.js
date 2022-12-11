@@ -41,8 +41,8 @@ otpRouter.post('/forgotPassword', async (req, res) => {
 
               await newOtp
                 .save()
-                .then((response) => {
-                  sendEmailToUser(
+                .then(async (response) => {
+                  await sendEmailToUser(
                     email,
                     'OTP',
                     `Your OTP is: ${response.otp} for ${response.email}`
