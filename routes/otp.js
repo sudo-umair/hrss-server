@@ -119,7 +119,7 @@ otpRouter.post('/forgotPassword', async (req, res) => {
                     status: '200',
                     message: 'Otp sent successfully on ' + email,
                   });
-                  await setTimeout(async () => {
+                  setTimeout(async () => {
                     await Otp.findOneAndDelete({ email, userType }).then(
                       (otp) => {
                         if (otp) {
@@ -127,7 +127,7 @@ otpRouter.post('/forgotPassword', async (req, res) => {
                         }
                       }
                     );
-                  }, 5000);
+                  }, 120000);
                 })
                 .catch((err) => {
                   console.log(err);
