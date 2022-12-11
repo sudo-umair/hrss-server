@@ -1,6 +1,11 @@
-import { appId, appToken, baseUrl, baseUrlIndie } from '../constants.js';
+import {
+  appId,
+  appToken,
+  baseUrl,
+  baseUrlIndie,
+  baseUrlGroup,
+} from '../constants.js';
 import axios from 'axios';
-import { Router } from 'express';
 
 export const sendNotificationToUser = async (
   userId,
@@ -53,7 +58,7 @@ export const sendNotificationToAll = async (title, body, pushData) => {
 export const sendNotificationToGroup = async (emails, title, body) => {
   try {
     axios
-      .post(`https://app.nativenotify.com/api/indie/group/notification`, {
+      .post(baseUrlGroup, {
         subIDs: emails,
         appId: appId,
         appToken: appToken,
