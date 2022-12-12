@@ -131,7 +131,7 @@ resourceRouter.put('/approveRequest', (req, res) => {
             if (userType === 'user') {
               sendNotificationToUser(
                 requestedByEmail,
-                'Request Approved',
+                'Resource Request Approved',
                 `Your request for ${resourceName} has been approved by ${approvedByName}`,
                 '{"screen": "Resources"}'
               );

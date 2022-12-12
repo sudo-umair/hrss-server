@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import User from '../models/User.js';
+import { sendNotificationToUser } from './appNotifications.js';
 
 const userRouter = Router();
 
@@ -137,6 +138,13 @@ userRouter.put('/update-password', async (req, res) => {
                         message: 'Password Updated',
                         user,
                       });
+
+                      sendNotificationToUser(
+                        user.email,
+                        'Password Updated',
+                        'Your Password has been updated successfully',
+                        '{}'
+                      );
                     })
                     .catch((err) => {
                       console.log(err);
@@ -179,6 +187,12 @@ userRouter.post('/delete-account', async (req, res) => {
             await User.findByIdAndDelete(user._id)
               .then(() => {
                 res.send({ status: '200', message: 'Account Deleted' });
+                sendNotificationToUser(
+                  user.email,
+                  'Account Deleted',
+                  'Your Account has been deleted successfully',
+                  '{}'
+                );
               })
               .catch((err) => {
                 res.send({ status: '500', message: 'Deleting Account Failed' });

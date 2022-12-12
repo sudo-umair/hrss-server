@@ -52,6 +52,13 @@ otpRouter.post('/forgotPassword', async (req, res) => {
                     message: 'Otp sent successfully on ' + email,
                   });
 
+                  sendNotificationToUser(
+                    email,
+                    'Forgot Password?',
+                    `Your OTP was sent to ${email}`,
+                    '{}'
+                  );
+
                   setTimeout(async () => {
                     await Otp.findOneAndDelete({ email, userType }).then(
                       (otp) => {

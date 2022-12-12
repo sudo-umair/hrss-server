@@ -88,7 +88,7 @@ volunteerRouter.post('/updateApplicantStatus', async (req, res) => {
     });
     sendNotificationToUser(
       applicantEmail,
-      'Volunteer Request Status Updated',
+      'Applicant Status Updated',
       `Your request has been ${requestStatus} by ${hospitalName}`,
       '{"screen":"Volunteers"}'
     );
@@ -117,8 +117,9 @@ volunteerRouter.post('/updateVolunteerRequest', async (req, res) => {
     });
     sendNotificationToGroup(
       emails,
-      `Volunteer Requests ${requestStatus}`,
-      `${volunteer.hospitalName} has ${requestStatus} requests for ${volunteer.volunteerRequestTitle}`
+      `Volunteer Request ${requestStatus}`,
+      `${volunteer.hospitalName} has ${requestStatus} requests for ${volunteer.volunteerRequestTitle}`,
+      '{"screen":"Volunteers"}'
     );
   } catch (err) {
     console.log(err);
