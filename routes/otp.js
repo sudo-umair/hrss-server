@@ -56,7 +56,7 @@ otpRouter.post('/forgotPassword', async (req, res) => {
                     email,
                     'Forgot Password?',
                     `Your OTP was sent to ${email}`,
-                    '{}'
+                    ''
                   );
 
                   setTimeout(async () => {
@@ -206,7 +206,7 @@ otpRouter.post('/resetPassword', (req, res) => {
             email,
             'Password Reset',
             `Password for ${email} has been reset successfully`,
-            '{"screen": "Account"}'
+            ''
           );
           Otp.findOneAndDelete({ email }).then((otp) => {
             if (otp) {

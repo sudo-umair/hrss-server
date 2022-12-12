@@ -143,7 +143,7 @@ userRouter.put('/update-password', async (req, res) => {
                         user.email,
                         'Password Updated',
                         'Your Password has been updated successfully',
-                        '{}'
+                        ''
                       );
                     })
                     .catch((err) => {
@@ -191,7 +191,7 @@ userRouter.post('/delete-account', async (req, res) => {
                   user.email,
                   'Account Deleted',
                   'Your Account has been deleted successfully',
-                  '{}'
+                  ''
                 );
               })
               .catch((err) => {
