@@ -100,6 +100,4 @@ hospitalSchema.methods.updateAccount = async function (
   await hospital.save();
 };
 
-const hospital = new mongoose.model('hospitals', hospitalSchema);
-
-export default hospital;
+export default mongoose.model('hospitals', hospitalSchema);
