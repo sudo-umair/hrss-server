@@ -1,7 +1,7 @@
 import Resource from '../models/Resource.js';
 import { sendNotificationToUser } from '../utils/appNotifications.js';
 
-export const postRequest = (req, res) => {
+export const postRequest = async (req, res) => {
   const {
     userType,
     resourceName,
@@ -26,7 +26,7 @@ export const postRequest = (req, res) => {
     requestedByAddress,
   });
 
-  newResource
+  await newResource
     .save()
     .then((result) => {
       res.send({
@@ -44,7 +44,7 @@ export const postRequest = (req, res) => {
     });
 };
 
-export const updateRequest = (req, res) => {
+export const updateRequest = async (req, res) => {
   const {
     id,
     resourceName,
@@ -55,7 +55,7 @@ export const updateRequest = (req, res) => {
 
   console.log(id);
 
-  Resource.findById(id)
+  await Resource.findById(id)
     .then((resource) => {
       console.log(resource);
       if (resource.requestStatus !== 'Pending') {
@@ -97,10 +97,9 @@ export const updateRequest = (req, res) => {
     });
 };
 
-export const fetchOneRequest = (req, res) => {
+export const fetchOneRequest = async (req, res) => {
   const { id } = req.params;
-  console.log(id, 'ss');
-  Resource.findById(id)
+  await Resource.findById(id)
     .then((result) => {
       res.send({
         status: '200',
@@ -117,10 +116,10 @@ export const fetchOneRequest = (req, res) => {
     });
 };
 
-export const fetchRequests = (req, res) => {
+export const fetchRequests = async (req, res) => {
   const { userType } = req.body;
   if (userType === 'user') {
-    Resource.find({
+    await Resource.find({
       userType: 'user',
     })
       .then((result) => {
@@ -138,7 +137,7 @@ export const fetchRequests = (req, res) => {
         });
       });
   } else if (userType === 'hospital') {
-    Resource.find({})
+    await Resource.find({})
       .then((result) => {
         res.send({
           status: '200',
@@ -156,10 +155,10 @@ export const fetchRequests = (req, res) => {
   }
 };
 
-export const totalNumberOfRequests = (req, res) => {
+export const totalNumberOfRequests = async (req, res) => {
   const { email } = req.body;
 
-  Resource.find({ requestedByEmail: email })
+  await Resource.find({ requestedByEmail: email })
     .then((resources) => {
       res.send({
         status: '200',
@@ -172,7 +171,7 @@ export const totalNumberOfRequests = (req, res) => {
     });
 };
 
-export const approveRequest = (req, res) => {
+export const approveRequest = async (req, res) => {
   const {
     id,
     requestStatus,
@@ -181,7 +180,7 @@ export const approveRequest = (req, res) => {
     approvedByPhone,
   } = req.body;
 
-  Resource.findById(id)
+  await Resource.findById(id)
     .then((resource) => {
       if (resource.requestStatus !== 'Pending') {
         const { approvedByName } = resource;
@@ -196,10 +195,10 @@ export const approveRequest = (req, res) => {
           approvedByPhone,
           approvedByEmail,
         })
-          .then((result) => {
+          .then(async (result) => {
             const { resourceName, requestedByEmail, userType } = result;
             if (userType === 'user') {
-              sendNotificationToUser(
+              await sendNotificationToUser(
                 requestedByEmail,
                 'Resource Request Approved',
                 `Your request for ${resourceName} has been approved by ${approvedByName}`,
@@ -269,9 +268,9 @@ export const deleteRequest = async (req, res) => {
     });
 };
 
-export const hideRequest = (req, res) => {
+export const hideRequest = async (req, res) => {
   const { id, email } = req.body;
-  Resource.findOne({
+  await Resource.findOne({
     _id: id,
   })
     .then((resource) => {
