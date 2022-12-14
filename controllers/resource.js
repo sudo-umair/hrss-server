@@ -44,6 +44,79 @@ export const postRequest = (req, res) => {
     });
 };
 
+export const updateRequest = (req, res) => {
+  const {
+    id,
+    resourceName,
+    resourceQuantity,
+    resourceDuration,
+    resourceNotes,
+  } = req.body;
+
+  console.log(id);
+
+  Resource.findById(id)
+    .then((resource) => {
+      console.log(resource);
+      if (resource.requestStatus !== 'Pending') {
+        const { approvedByName } = resource;
+        res.send({
+          status: '409',
+          message: 'Request already approved by ' + approvedByName,
+        });
+      } else {
+        Resource.findByIdAndUpdate(id, {
+          resourceName,
+          resourceQuantity,
+          resourceDuration,
+          resourceNotes,
+        })
+          .then((result) => {
+            res.send({
+              status: '200',
+              message: 'Resource Request Updated',
+            });
+          })
+          .catch((err) => {
+            console.log(err);
+            res.send({
+              status: '500',
+              message: 'Failed to Update Resource Request',
+              error: err,
+            });
+          });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+      res.send({
+        status: '500',
+        message: 'Resource Request Update Failed',
+        error: err,
+      });
+    });
+};
+
+export const fetchOneRequest = (req, res) => {
+  const { id } = req.params;
+  console.log(id, 'ss');
+  Resource.findById(id)
+    .then((result) => {
+      res.send({
+        status: '200',
+        message: 'Request Fetched',
+        result: result,
+      });
+    })
+    .catch((err) => {
+      res.send({
+        status: '500',
+        message: 'Fetching Request Failed',
+        error: err,
+      });
+    });
+};
+
 export const fetchRequests = (req, res) => {
   const { userType } = req.body;
   if (userType === 'user') {
