@@ -9,12 +9,16 @@ import {
   updateApplicantStatus,
   updateVolunteerRequest,
   withdrawVolunteerRequest,
+  fetchOneRequest,
+  updateRequest,
 } from '../controllers/volunteer.js';
 
 const volunteerRouter = express.Router();
 
 volunteerRouter.post('/createVolunteerRequest', createVolunteerRequest);
 volunteerRouter.post('/fetchMyVolunteerRequests', fetchMyVolunteerRequests);
+volunteerRouter.post('/fetchOneRequest/:id', fetchOneRequest);
+volunteerRouter.post('/updateRequest', updateRequest);
 volunteerRouter.post('/deleteVolunteerRequest', deleteVolunteerRequest);
 volunteerRouter.post('/updateApplicantStatus', updateApplicantStatus);
 volunteerRouter.post('/updateVolunteerRequest', updateVolunteerRequest);

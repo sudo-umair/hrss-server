@@ -37,6 +37,73 @@ export const createVolunteerRequest = async (req, res) => {
   }
 };
 
+export const fetchOneRequest = async (req, res) => {
+  const { id } = req.params;
+  Volunteer.findById(id)
+    .then((result) => {
+      res.send({
+        status: '200',
+        message: 'Request Fetched',
+        result: result,
+      });
+    })
+    .catch((err) => {
+      res.send({
+        status: '500',
+        message: 'Fetching Request Failed',
+        error: err,
+      });
+    });
+};
+
+export const updateRequest = async (req, res) => {
+  const {
+    id,
+    volunteerRequestTitle,
+    volunteerRequestDescription,
+    volunteersRequired,
+    timeDuration,
+  } = req.body;
+  try {
+    await Volunteer.findById(id)
+      .then(async (result) => {
+        if (result.applicants.length > 0) {
+          res.send({
+            status: '500',
+            message:
+              'Cannot Update, Applicants have already applied for this request',
+          });
+        } else {
+          await Volunteer.findByIdAndUpdate(id, {
+            volunteerRequestTitle,
+            volunteerRequestDescription,
+            volunteersRequired,
+            timeDuration,
+          });
+          res.send({
+            status: '200',
+            message: 'Volunteer Request Updated',
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        res.send({
+          status: '500',
+          message: 'Failed to Update Volunteer Request',
+          error: err,
+        });
+      });
+  } catch (err) {
+    console.log(err);
+    res.send({
+      status: '500',
+      message: 'Failed to Update Volunteer Request',
+      error: err,
+    });
+  }
+};
+
 export const fetchMyVolunteerRequests = async (req, res) => {
   try {
     const { hospitalEmail } = req.body;
