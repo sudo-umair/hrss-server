@@ -37,25 +37,6 @@ export const createVolunteerRequest = async (req, res) => {
   }
 };
 
-export const fetchOneRequest = async (req, res) => {
-  const { id } = req.params;
-  Volunteer.findById(id)
-    .then((result) => {
-      res.send({
-        status: '200',
-        message: 'Request Fetched',
-        result: result,
-      });
-    })
-    .catch((err) => {
-      res.send({
-        status: '500',
-        message: 'Fetching Request Failed',
-        error: err,
-      });
-    });
-};
-
 export const updateRequest = async (req, res) => {
   const {
     id,

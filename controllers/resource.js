@@ -97,25 +97,6 @@ export const updateRequest = async (req, res) => {
     });
 };
 
-export const fetchOneRequest = async (req, res) => {
-  const { id } = req.params;
-  await Resource.findById(id)
-    .then((result) => {
-      res.send({
-        status: '200',
-        message: 'Request Fetched',
-        result: result,
-      });
-    })
-    .catch((err) => {
-      res.send({
-        status: '500',
-        message: 'Fetching Request Failed',
-        error: err,
-      });
-    });
-};
-
 export const fetchRequests = async (req, res) => {
   const { userType } = req.body;
   if (userType === 'user') {
