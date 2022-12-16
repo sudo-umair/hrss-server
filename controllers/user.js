@@ -1,4 +1,5 @@
 import User from '../models/User.js';
+import Resource from '../models/Resource.js';
 import { sendNotificationToUser } from '../utils/appNotifications.js';
 
 export const signup = async (req, res) => {
