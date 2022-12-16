@@ -7,6 +7,7 @@ import {
   resumeSession,
   updateAccount,
   updatePassword,
+  fetchStats,
 } from '../controllers/user.js';
 
 const userRouter = Router();
@@ -18,5 +19,6 @@ userRouter.put('/update-password', updatePassword);
 userRouter.post('/delete-account', deleteAccount);
 userRouter.post('/signout', signout);
 userRouter.post('/resume-session', resumeSession);
+userRouter.post('/fetchStats', fetchStats);
 
 export default userRouter;

@@ -1,29 +1,29 @@
 import express from 'express';
 import {
-  createVolunteerRequest,
-  applyForVolunteerRequest,
-  fetchAllRequests,
-  deleteVolunteerRequest,
-  fetchMyVolunteerRequests,
-  hideVolunteerRequest,
   updateApplicantStatus,
-  updateVolunteerRequest,
-  withdrawVolunteerRequest,
   updateRequest,
+  postRequest,
+  fetchMyRequests,
+  deleteRequest,
+  updateRequestStatus,
+  fetchRequests,
+  withdrawApplication,
+  hideRequest,
+  applyForRequest,
 } from '../controllers/volunteer.js';
 
 const volunteerRouter = express.Router();
 
-volunteerRouter.post('/createVolunteerRequest', createVolunteerRequest);
-volunteerRouter.post('/fetchMyVolunteerRequests', fetchMyVolunteerRequests);
+volunteerRouter.post('/postRequest', postRequest);
+volunteerRouter.post('/fetchMyRequests', fetchMyRequests);
 volunteerRouter.post('/updateRequest', updateRequest);
-volunteerRouter.post('/deleteVolunteerRequest', deleteVolunteerRequest);
+volunteerRouter.post('/deleteRequest', deleteRequest);
 volunteerRouter.post('/updateApplicantStatus', updateApplicantStatus);
-volunteerRouter.post('/updateVolunteerRequest', updateVolunteerRequest);
+volunteerRouter.post('/updateRequestStatus', updateRequestStatus);
 //app
-volunteerRouter.get('/fetchAllRequests', fetchAllRequests);
-volunteerRouter.post('/applyForVolunteerRequest', applyForVolunteerRequest);
-volunteerRouter.post('/withdrawVolunteerRequest', withdrawVolunteerRequest);
-volunteerRouter.post('/hideVolunteerRequest', hideVolunteerRequest);
+volunteerRouter.get('/fetchRequests', fetchRequests);
+volunteerRouter.post('/applyForRequest', applyForRequest);
+volunteerRouter.post('/withdrawApplication', withdrawApplication);
+volunteerRouter.post('/hideRequest', hideRequest);
 
 export default volunteerRouter;

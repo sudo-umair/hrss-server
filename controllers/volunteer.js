@@ -4,7 +4,7 @@ import {
   sendNotificationToGroup,
 } from '../utils/appNotifications.js';
 
-export const createVolunteerRequest = async (req, res) => {
+export const postRequest = async (req, res) => {
   try {
     const {
       hospitalName,
@@ -85,7 +85,7 @@ export const updateRequest = async (req, res) => {
   }
 };
 
-export const fetchMyVolunteerRequests = async (req, res) => {
+export const fetchMyRequests = async (req, res) => {
   try {
     const { hospitalEmail } = req.body;
     const volunteerRequests = await Volunteer.find({
@@ -101,7 +101,7 @@ export const fetchMyVolunteerRequests = async (req, res) => {
   }
 };
 
-export const deleteVolunteerRequest = async (req, res) => {
+export const deleteRequest = async (req, res) => {
   try {
     const { volunteerRequestId } = req.body;
     await Volunteer.findByIdAndDelete(volunteerRequestId);
@@ -146,7 +146,7 @@ export const updateApplicantStatus = async (req, res) => {
   }
 };
 
-export const updateVolunteerRequest = async (req, res) => {
+export const updateRequestStatus = async (req, res) => {
   const { volunteerRequestId, requestStatus } = req.body;
   try {
     const volunteer = await Volunteer.findByIdAndUpdate(volunteerRequestId, {
@@ -175,7 +175,7 @@ export const updateVolunteerRequest = async (req, res) => {
   }
 };
 
-export const fetchAllRequests = async (req, res) => {
+export const fetchRequests = async (req, res) => {
   try {
     const volunteerRequests = await Volunteer.find({});
     res.send({
@@ -188,7 +188,7 @@ export const fetchAllRequests = async (req, res) => {
   }
 };
 
-export const applyForVolunteerRequest = async (req, res) => {
+export const applyForRequest = async (req, res) => {
   try {
     const {
       volunteerRequestId,
@@ -220,7 +220,7 @@ export const applyForVolunteerRequest = async (req, res) => {
   }
 };
 
-export const withdrawVolunteerRequest = async (req, res) => {
+export const withdrawApplication = async (req, res) => {
   try {
     const { id, applicantEmail } = req.body;
     const volunteerRequest = await Volunteer.findOne({
@@ -246,7 +246,7 @@ export const withdrawVolunteerRequest = async (req, res) => {
   }
 };
 
-export const hideVolunteerRequest = (req, res) => {
+export const hideRequest = (req, res) => {
   const { id, applicantEmail } = req.body;
 
   Volunteer.findOne({ _id: id })

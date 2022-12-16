@@ -225,7 +225,7 @@ export const signout = async (req, res) => {
     });
 };
 
-export const requestsCount = async (req, res) => {
+export const fetchStats = async (req, res) => {
   try {
     const { email } = req.body;
     console.log(req.body);

@@ -5,8 +5,8 @@ import {
   signup,
   signout,
   updateAccount,
-  requestsCount,
   updatePassword,
+  fetchStats,
 } from '../controllers/hospital.js';
 
 const hospitalRouter = Router();
@@ -17,6 +17,6 @@ hospitalRouter.put('/update-account', updateAccount);
 hospitalRouter.put('/update-password', updatePassword);
 hospitalRouter.post('/delete-account', deleteAccount);
 hospitalRouter.post('/signout', signout);
-hospitalRouter.post('/requests-count', requestsCount);
+hospitalRouter.post('/fetchStats', fetchStats);
 
 export default hospitalRouter;

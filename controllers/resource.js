@@ -136,22 +136,6 @@ export const fetchRequests = async (req, res) => {
   }
 };
 
-export const totalNumberOfRequests = async (req, res) => {
-  const { email } = req.body;
-
-  await Resource.find({ requestedByEmail: email })
-    .then((resources) => {
-      res.send({
-        status: '200',
-        message: 'Requests Fetched Successfully',
-        data: resources.length,
-      });
-    })
-    .catch((err) => {
-      res.send({ status: '500', message: 'Fetching Requests Failed' });
-    });
-};
-
 export const approveRequest = async (req, res) => {
   const {
     id,

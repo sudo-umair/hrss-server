@@ -268,3 +268,19 @@ export const resumeSession = async (req, res) => {
       res.send({ status: '500', message: 'Error Resuming Session' });
     });
 };
+
+export const fetchStats = async (req, res) => {
+  const { email } = req.body;
+
+  await Resource.find({ requestedByEmail: email })
+    .then((resources) => {
+      res.send({
+        status: '200',
+        message: 'Requests Fetched Successfully',
+        data: resources.length,
+      });
+    })
+    .catch((err) => {
+      res.send({ status: '500', message: 'Fetching Requests Failed' });
+    });
+};
