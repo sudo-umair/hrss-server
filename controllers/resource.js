@@ -223,7 +223,6 @@ export const deleteRequest = async (req, res) => {
               status: '200',
               message: 'Request Deleted',
             });
-            console.log('that');
           })
           .catch((err) => {
             res.send({
@@ -232,7 +231,6 @@ export const deleteRequest = async (req, res) => {
               error: err,
             });
           });
-        console.log('this');
       } else {
         res.send({
           status: '500',
