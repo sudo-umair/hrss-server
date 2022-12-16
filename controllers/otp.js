@@ -2,7 +2,7 @@ import otpGenerator from 'otp-generator';
 import Otp from '../models/Otp.js';
 import User from '../models/User.js';
 import Hospital from '../models/Hospital.js';
-import { sendEmailToUser } from '../utils/nodeMailer.js';
+import { sendForgotPasswordEmail } from '../utils/email.js';
 import { sendNotificationToUser } from '../utils/appNotifications.js';
 
 export const forgotPassword = async (req, res) => {
@@ -22,57 +22,6 @@ export const forgotPassword = async (req, res) => {
                 message:
                   'OTP sent already. Please check your email for the OTP or try again after 2 minutes',
               });
-            } else {
-              const otp = otpGenerator.generate(6, {
-                digits: true,
-                upperCaseAlphabets: false,
-                lowerCaseAlphabets: false,
-                specialChars: false,
-              });
-
-              const newOtp = await new Otp({
-                email,
-                otp,
-                userType,
-              });
-
-              await newOtp
-                .save()
-                .then(async (response) => {
-                  await sendEmailToUser(
-                    email,
-                    'OTP',
-                    `Your OTP is: ${response.otp} for ${response.email}`
-                  );
-                  res.send({
-                    status: '200',
-                    message: 'Otp sent successfully on ' + email,
-                  });
-
-                  sendNotificationToUser(
-                    email,
-                    'Forgot Password?',
-                    `Your OTP was sent to ${email}`,
-                    ''
-                  );
-
-                  setTimeout(async () => {
-                    await Otp.findOneAndDelete({ email, userType }).then(
-                      (otp) => {
-                        if (otp) {
-                          console.log('OTP Deleted from DB');
-                        }
-                      }
-                    );
-                  }, 120000);
-                })
-                .catch((err) => {
-                  console.log(err);
-                  res.send({
-                    status: '500',
-                    message: 'Error Sending OTP. Please try again later',
-                  });
-                });
             }
           });
         }
@@ -97,49 +46,6 @@ export const forgotPassword = async (req, res) => {
                 message:
                   'OTP sent already. Please check your email for the OTP or try again after 2 minutes',
               });
-            } else {
-              const otp = otpGenerator.generate(6, {
-                digits: true,
-                upperCaseAlphabets: false,
-                lowerCaseAlphabets: false,
-                specialChars: false,
-              });
-
-              const newOtp = await new Otp({
-                email,
-                otp,
-                userType,
-              });
-
-              await newOtp
-                .save()
-                .then(async (response) => {
-                  await sendEmailToUser(
-                    email,
-                    'OTP',
-                    `Your OTP is: ${response.otp} for ${response.email}`
-                  );
-                  res.send({
-                    status: '200',
-                    message: 'Otp sent successfully on ' + email,
-                  });
-                  setTimeout(async () => {
-                    await Otp.findOneAndDelete({ email, userType }).then(
-                      (otp) => {
-                        if (otp) {
-                          console.log('OTP Deleted from DB');
-                        }
-                      }
-                    );
-                  }, 120000);
-                })
-                .catch((err) => {
-                  console.log(err);
-                  res.send({
-                    status: '500',
-                    message: 'Error Sending OTP. Please try again later',
-                  });
-                });
             }
           });
         }
@@ -152,6 +58,52 @@ export const forgotPassword = async (req, res) => {
         });
       });
   }
+  const otp = otpGenerator.generate(6, {
+    digits: true,
+    upperCaseAlphabets: false,
+    lowerCaseAlphabets: false,
+    specialChars: false,
+  });
+
+  const newOtp = await new Otp({
+    email,
+    otp,
+    userType,
+  });
+
+  await newOtp
+    .save()
+    .then(async (response) => {
+      await sendForgotPasswordEmail(email, response.otp);
+      res.send({
+        status: '200',
+        message: 'Otp sent successfully on ' + email,
+      });
+
+      if (userType === 'user') {
+        await sendNotificationToUser(
+          email,
+          'Forgot Password?',
+          `Your OTP was sent to ${email}`,
+          ''
+        );
+      }
+
+      setTimeout(async () => {
+        await Otp.findOneAndDelete({ email, userType }).then((otp) => {
+          if (otp) {
+            console.log('OTP Deleted from DB');
+          }
+        });
+      }, 120000);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.send({
+        status: '500',
+        message: 'Error Sending OTP. Please try again later',
+      });
+    });
 };
 
 export const verifyOtp = (req, res) => {
