@@ -1,5 +1,6 @@
 import Resource from '../models/Resource.js';
 import { sendNotificationToUser } from '../utils/appNotifications.js';
+import { sendResourceApprovedEmail } from '../utils/email.js';
 
 export const postRequest = async (req, res) => {
   const {
@@ -162,6 +163,10 @@ export const approveRequest = async (req, res) => {
         })
           .then(async (result) => {
             const { resourceName, requestedByEmail, userType } = result;
+            res.send({
+              status: '200',
+              message: 'Request Approved',
+            });
             if (userType === 'user') {
               await sendNotificationToUser(
                 requestedByEmail,
@@ -170,9 +175,8 @@ export const approveRequest = async (req, res) => {
                 '{"screen": "Resources"}'
               );
             }
-            res.send({
-              status: '200',
-              message: 'Request Approved',
+            Resource.findById(id).then(async (resource) => {
+              await sendResourceApprovedEmail(resource);
             });
           })
           .catch((err) => {
