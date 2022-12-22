@@ -74,6 +74,7 @@ userSchema.methods.validateToken = async function (token) {
     if (decoded._id === user._id.toString()) {
       return true;
     }
+    return false;
   } catch (err) {
     console.log(err.message);
     return false;
