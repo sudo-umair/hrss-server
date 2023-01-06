@@ -14,7 +14,7 @@ export const sendNotificationToUser = async (
   pushData
 ) => {
   try {
-    axios
+    await axios
       .post(baseUrlIndie, {
         subID: userId,
         appId,
@@ -36,7 +36,7 @@ export const sendNotificationToUser = async (
 
 export const sendNotificationToAll = async (title, body, pushData) => {
   try {
-    axios
+    await axios
       .post(baseUrl, {
         appId,
         appToken,
@@ -57,7 +57,7 @@ export const sendNotificationToAll = async (title, body, pushData) => {
 
 export const sendNotificationToGroup = async (emails, title, body) => {
   try {
-    axios
+    await axios
       .post(baseUrlGroup, {
         subIDs: emails,
         appId: appId,
